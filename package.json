@@ -1,0 +1,25 @@
+{
+  "name": "verge-website",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/nyerrr/verge-website#readme",
+  "bugs": {
+    "url": "https://github.com/nyerrr/verge-website/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyerrr/verge-website.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx @tailwindcss/cli -i ./src/input.css -o ./dist/style.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.16",
+    "tailwindcss": "^4.1.16"
+  }
+}
