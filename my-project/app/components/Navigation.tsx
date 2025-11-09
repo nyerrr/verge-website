@@ -3,6 +3,19 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import {Poppins, Roboto} from 'next/font/google'
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-poppins',
+})
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-roboto',
+})
 
 export default function Navigation() {
   const [open, setOpen] = useState(false)
@@ -80,11 +93,11 @@ export default function Navigation() {
   }, [open])
 
   return (
-    <header className="bg-white shadow-md">
+    <header className={`${poppins.className} bg-gray-200 shadow-xl`}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-25">
           {/* Left: logo */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 md:ml-6">
             <Link href="/" aria-label="Home">
               <Image
                 src="/Untitled-1.png"
@@ -95,17 +108,16 @@ export default function Navigation() {
                 className="w-auto h-14 md:h-28"
               />
             </Link>
+              {/* Center / Desktop nav */}
+            <nav className="hidden md:flex md:space-x-4 text-black">
+              <Link href="/" className="px-3 py-2 rounded hover:bg-gray-100">Home</Link>
+              <Link href="/about" className="px-3 py-2 rounded hover:bg-gray-100">About us</Link>
+              <Link href="/buy" className="px-3 py-2 rounded hover:bg-gray-100">Buy</Link>
+              <Link href="/sell" className="px-3 py-2 rounded hover:bg-gray-100">Sell</Link>
+              <Link href="/rent" className="px-3 py-2 rounded hover:bg-gray-100">Rent</Link>
+              <Link href="/contact" className="px-3 py-2 rounded hover:bg-gray-100">Contact Us</Link>
+            </nav>
           </div>
-
-          {/* Center / Desktop nav */}
-          <nav className="hidden md:flex md:space-x-4 text-black">
-            <Link href="/" className="px-3 py-2 rounded hover:bg-gray-100">Home</Link>
-            <Link href="/about" className="px-3 py-2 rounded hover:bg-gray-100">About us</Link>
-            <Link href="/buy" className="px-3 py-2 rounded hover:bg-gray-100">Buy</Link>
-            <Link href="/sell" className="px-3 py-2 rounded hover:bg-gray-100">Sell</Link>
-            <Link href="/rent" className="px-3 py-2 rounded hover:bg-gray-100">Rent</Link>
-            <Link href="/contact" className="px-3 py-2 rounded hover:bg-gray-100">Contact Us</Link>
-          </nav>
 
           {/* Right: search + mobile button */}
           <div className="flex text-black items-center gap-3">
@@ -118,6 +130,11 @@ export default function Navigation() {
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </button>
+            </div>
+            <div>
+              <Link href="/login" className="px-4 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">
+              Log in
+              </Link>
             </div>
 
             {/* mobile menu button */}
@@ -160,7 +177,7 @@ export default function Navigation() {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="text-lg text-black font-semibold">Menu</div>
-            <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 rounded bg-gray-100 hover:bg-gray-200">
+            <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 rounded bg-gray-950 hover:bg-gray-200">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>

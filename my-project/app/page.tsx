@@ -1,19 +1,42 @@
+import {Poppins, Roboto} from 'next/font/google'
+import Image from 'next/image'
+import ImageCarousel from './components/ImageCarousel'
+
+
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-poppins',
+})
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-roboto',
+})
 export default function Home() {
   return (
-    <main className="flex-1">
+    <main className={`${roboto.className} flex-1`}>
       {/* Hero Section */}
-      <section className="bg-linear-to-r from-blue-500 to-purple-600 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+      <section className="h-[70vh] relative overflow-hidden">
+        {/* Image Carousel */}
+        <div className="absolute inset-0">
+          <ImageCarousel />
+        </div>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/50 to-transparent z-1"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto text-center pt-20">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
               Welcome
             </h1>
-            <p className="text-xl mb-8">
+            <p className="text-xl mb-8 text-white/90">
               Discover amazing possibilities with our innovative solutions
             </p>
             <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
               Get Started
             </button>
+            
           </div>
         </div>
       </section>

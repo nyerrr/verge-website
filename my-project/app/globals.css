@@ -5,7 +5,7 @@
   --foreground: #171717;
 }
 
-@theme inline {
+.theme-inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -29,4 +29,9 @@ body {
 .menu-open main {
   opacity: 0.6;
   transition: opacity 300ms ease-in-out;
+}
+
+/* Use the Poppins variable (set in layout) for header/navigation */
+header {
+  font-family: var(--font-poppins, Poppins), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
