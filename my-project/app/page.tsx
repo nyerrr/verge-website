@@ -1,7 +1,6 @@
 import {Poppins, Roboto} from 'next/font/google'
 import Image from 'next/image'
 
-
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '700'],
@@ -12,17 +11,23 @@ const roboto = Roboto({
   weight: ['400', '700'],
   variable: '--font-roboto',
 })
+
 export default function Home() {
   return (
     <main className={`${roboto.className} flex-1`}>
       {/* Hero Section */}
       <section className="h-[70vh] relative overflow-hidden">
-        {/* Image Carousel */}
-        <div className="absolute inset-0">
-        </div>
+        <Image
+          src="/The_Albany1.png"
+          alt="Carousel Image"
+          fill
+          className="object-cover opacity-80 bg-linear-to-b from-black/40 to-transparent"
+        />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/50 to-transparent z-1"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-black/50 to-transparent z-1">
+        </div>
         <div className="container mx-auto px-4 relative z-10">
+          
           <div className="max-w-3xl mx-auto text-center pt-20">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
               Welcome
@@ -35,6 +40,7 @@ export default function Home() {
             </button>
             
           </div>
+          
         </div>
       </section>
 
