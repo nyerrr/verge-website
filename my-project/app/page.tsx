@@ -1,7 +1,5 @@
 import {Poppins, Roboto} from 'next/font/google'
 import Image from 'next/image'
-import ImageCarousel from './components/ImageCarousel'
-
 
 
 const poppins = Poppins({
@@ -21,7 +19,6 @@ export default function Home() {
       <section className="h-[70vh] relative overflow-hidden">
         {/* Image Carousel */}
         <div className="absolute inset-0">
-          <ImageCarousel />
         </div>
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-linear-to-b from-black/50 to-transparent z-1"></div>
