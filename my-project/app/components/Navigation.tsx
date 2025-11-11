@@ -102,7 +102,7 @@ export default function Navigation() {
               <Image
                 src="/Untitled-1.png"
                 alt="Logo"
-                width={160}
+                width={180}
                 height={160}
                 priority
                 className="w-auto h-14 md:h-28"
