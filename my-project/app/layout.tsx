@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Poppins } from 'next/font/google'
+import { Changa_One } from "next/font/google";
 import "./globals.css";
 import Navigation from './components/Navigation';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const changaOne = Changa_One({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: 'swap',
+  variable: "--font-changa-one",
 });
 
 const geistMono = Geist_Mono({
@@ -34,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${poppins.className} ${geistSans.variable} ${geistMono.variable} ${changaOne.variable} antialiased`}
       >
         <Navigation />
         <main>{children}</main>

@@ -121,16 +121,6 @@ export default function Navigation() {
 
           {/* Right: search + mobile button */}
           <div className="flex text-black items-center gap-3">
-            {/* desktop search */}
-            <div className="hidden md:flex items-center border border-gray-300 rounded overflow-hidden">
-              <input type="text" placeholder="Search..." className="px-3 py-2 text-gray-800 focus:outline-none" />
-              <button type="button" aria-label="Search" className="bg-blue-500 text-white p-3 flex items-center justify-center hover:bg-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <circle cx="11" cy="11" r="7" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-              </button>
-            </div>
             <div>
               <Link href="/login" className="px-4 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">
               Log in
