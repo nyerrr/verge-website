@@ -291,8 +291,32 @@ export default function Home() {
       </section>
 
       <section className="bg-white mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:text-3xl md:text-sm-2xl">
-        <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>Subscribe To Our Newsletter</h1>
-        <p className={`${poppins.className} text-gray-800 mt-2 text-sm`}>Stay updated with the latest news and offers</p>
+        <div className="mx-20">
+          <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>Subscribe To Our Newsletter</h1>
+          <p className={`${poppins.className} text-gray-800 mt-4 text-sm`}>Stay updated with the latest news and offers</p>
+        
+          <div className="mt-4">
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="rounded-l-lg border py-2 border-gray-300 rounded-2xl"
+            />
+            <button className="mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
+              Subscribe
+            </button>
+          </div>
+        
+        {/*Image Placeholder*/}
+          <div className="flex-1 flex justify-end">
+            <Image
+              src="/email.png"
+              alt="Newsletter Image"
+              width={500}
+              height={500}
+              className="w-50 h-50 rounded-lg right"
+            />
+          </div>
+        </div>
       </section>
 
       {/* Call to Action Section - Responsive */}
