@@ -1,6 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import {Poppins} from 'next/font/google'
+
+const poppins = Poppins({
+  weight: ["400","700"],
+  subsets: ["latin"],
+});
 
 export default function Home() {
   const [currentImage, setCurrentImage] = useState(0)
@@ -44,7 +51,7 @@ export default function Home() {
   return (
     <main className="flex-1">
       {/* Hero Section with Carousel - Responsive Height */}
-      <section className="h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] relative overflow-hidden">
+      <section className="h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] relative overflow-hidden">
         {/* Carousel Container */}
         <div className="absolute inset-0 w-full h-full">
           {images.map((image, index) => (
@@ -148,48 +155,144 @@ export default function Home() {
       {/* Features Section - Responsive Grid */}
       <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
         <div className="container text-black mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-left text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">
+          <h2 className="text-left text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12">
             Featured Cities
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white p-6 md:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-              <div className="text-blue-600 mb-4">
-                <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Innovation</h3>
-              <p className="text-gray-600 text-sm sm:text-base">
-                Stay ahead with cutting-edge solutions designed for the future.
-              </p>
+          {/* Feature 1 */}
+          <div className="bg-white p-6 md:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+            <div className="h-48 mb-4 flex items-center justify-center">
+              <Image
+                src="/Iloilo_city.jpeg"
+                alt="Innovation Icon"
+                width={200}
+                height={200}
+                className="object-cover w-full h-full rounded"
+              />
             </div>
-            {/* Feature 2 */}
-            <div className="bg-white p-6 md:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-              <div className="text-blue-600 mb-4">
-                <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Reliability</h3>
-              <p className="text-gray-600 text-sm sm:text-base">
-                Trust in our proven track record of delivering results.
-              </p>
+            <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-center">Iloilo City</h3>
+            <p className="text-gray-600 text-sm sm:text-base justify-center text-center">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              Nobis vel dignissimos, asperiores necessitatibus velit corporis, 
+              eligendi voluptatem, quos consectetur odit quam iste. 
+              Mollitia repellat impedit, blanditiis iste facilis sed voluptas.
+            </p>
+            <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
+              See More
+            </button>
+          </div>
+          {/* Feature 2 */}
+          <div className="bg-white p-6 md:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+            <div className="h-48 mb-4 flex items-center justify-center">
+              <Image
+                src="/bonifacio-high-street.PNG"
+                alt="Reliability Icon"
+                width={200}
+                height={200}
+                className="object-cover w-full h-full rounded"
+              />
             </div>
-            {/* Feature 3 */}
-            <div className="bg-white p-6 md:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow sm:col-span-2 lg:col-span-1">
-              <div className="text-blue-600 mb-4">
-                <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Support</h3>
-              <p className="text-gray-600 text-sm sm:text-base">
-                24/7 dedicated support to help you succeed.
-              </p>
+            <h3 className="text-center text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Bonifacio Global City</h3>
+            <p className="text-gray-600 text-sm sm:text-base justtify-center text-center">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              Nobis vel dignissimos, asperiores necessitatibus velit corporis, 
+              eligendi voluptatem, quos consectetur odit quam iste. 
+              Mollitia repellat impedit, blanditiis iste facilis sed voluptas.
+            </p>
+            <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
+              See More
+            </button>
+          </div>
+    
+          {/* Feature 3 */}
+          <div className="bg-white p-6 md:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow sm:col-span-2 lg:col-span-1">
+            <div className="h-48 mb-4 flex items-center justify-center">
+              <Image
+                src="/cebu_IT_Park.jpg"
+                alt="Support Icon"
+                width={200}
+                height={200}
+                className="object-cover w-full h-full rounded"
+              />
+            </div>
+            <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-center">Cebu City</h3>
+            <p className="text-gray-600 text-sm sm:text-base justify-between text-center">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              Nobis vel dignissimos, asperiores necessitatibus velit corporis, 
+              eligendi voluptatem, quos consectetur odit quam iste. 
+              Mollitia repellat impedit, blanditiis iste facilis sed voluptas.
+            </p>
+            <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
+              See More
+            </button>
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="py-12 sm:py-16 md:py-10 bg-gray-200 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-center text-black sm:text-lg mb-2">Stay updated</p>
+          <h2 className="text-center text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8">
+            Real Estate News
+          </h2>
+          
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-3xl mx-auto">
+            We are committed to providing the best real estate services with a focus on customer satisfaction, integrity, and professionalism. Our experienced agents are here to help you find your dream home or sell your property with ease.
+          </p>
+
+          {/* Image Containers */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto mt-8">
+            {/*Card 1*/}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+              <Image
+                src="/The_Albany1.png"
+                alt="News Image 1"
+                width={400}
+                height={400}
+                className="w-full h-64 object-cover"
+              />
+              <div className="p-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                  Modern Family Home
+                </h3>
+                <p className="text-md text-gray-800 mb-4">
+                  A beautiful modern family home located in the heart of the city.
+                </p>
+                <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
+                  Read More
+                </button>
+              </div>
+            </div>
+
+            {/*Card 2*/}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+              <Image
+                src="/NUVALI-PARK-35.png"
+                alt="News Image 2"
+                width={400}
+                height={400}
+                className="w-full h-64 object-cover"
+              />
+              <div className="p-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                  Urban Apartment Living
+                </h3>
+                <p className="text-md text-gray-800 mb-4">
+                  Experience the best of urban living in this stylish apartment.
+                </p>
+                <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
+                  Read More
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:text-3xl md:text-sm-2xl">
+        <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>Subscribe To Our Newsletter</h1>
+        <p className={`${poppins.className} text-gray-800 mt-2 text-sm`}>Stay updated with the latest news and offers</p>
       </section>
 
       {/* Call to Action Section - Responsive */}
