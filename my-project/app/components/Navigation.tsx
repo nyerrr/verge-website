@@ -93,9 +93,9 @@ export default function Navigation() {
   }, [open])
 
   return (
-    <header className={`${poppins.className} bg-gray-200 shadow-xl py-2`}>
+    <header className={`${poppins.className} bg-gray-200 shadow-xl py-5`}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-6">
           {/* Left: logo */}
           <div className="flex items-center space-x-4 md:ml-6">
             <Link href="/" aria-label="Home">
@@ -122,7 +122,7 @@ export default function Navigation() {
           {/* Right: search + mobile button */}
           <div className="flex text-black items-center gap-3">
             <div>
-              <Link href="/login" className="px-4 py-3 bg-black text-white rounded-4xl hover:bg-blue-700 transition duration-300">
+              <Link href="/login" className="px-4 py-3 bg-black text-white rounded-4xl  hover:shadow-[0_0_20px_black] transition duration-300">
               Log in
               </Link>
             </div>

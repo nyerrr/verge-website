@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {Poppins} from 'next/font/google'
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn} from 'react-icons/fa';
+
 
 const poppins = Poppins({
   weight: ["400","700"],
@@ -254,10 +256,13 @@ export default function Home() {
               />
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                  Modern Family Home
+                  How to Save Money to Buy Real Estate
                 </h3>
-                <p className="text-md text-gray-800 mb-4">
-                  A beautiful modern family home located in the heart of the city.
+                <p className="text-md text-gray-800 mb-4 text-justify">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                  Nobis vel dignissimos, asperiores necessitatibus 
+                  velit corporis, eligendi voluptatem, quos consectetur odit 
+                  quam iste. Mollitia repellat impedit, blanditiis iste facilis sed voluptas.
                 </p>
                 <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
                   Read More
@@ -276,10 +281,13 @@ export default function Home() {
               />
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                  Urban Apartment Living
+                  Tips in Designing your 1st House
                 </h3>
                 <p className="text-md text-gray-800 mb-4">
-                  Experience the best of urban living in this stylish apartment.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                  Nobis vel dignissimos, asperiores necessitatibus 
+                  velit corporis, eligendi voluptatem, quos consectetur odit 
+                  quam iste. Mollitia repellat impedit, blanditiis iste facilis sed voluptas.
                 </p>
                 <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
                   Read More
@@ -290,31 +298,39 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:text-3xl md:text-sm-2xl">
-        <div className="mx-20">
-          <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>Subscribe To Our Newsletter</h1>
-          <p className={`${poppins.className} text-gray-800 mt-4 text-sm`}>Stay updated with the latest news and offers</p>
-        
-          <div className="mt-4">
-            <input 
-              type="email" 
-              placeholder="Enter your email" 
-              className="rounded-l-lg border py-2 border-gray-300 rounded-2xl"
-            />
-            <button className="mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
-              Subscribe
-            </button>
-          </div>
-        
-        {/*Image Placeholder*/}
-          <div className="flex-1 flex justify-end">
-            <Image
-              src="/email.png"
-              alt="Newsletter Image"
-              width={500}
-              height={500}
-              className="w-50 h-50 rounded-lg right"
-            />
+      <section className="bg-white mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            {/*Left Side - Text*/}
+            <div className="flex-1 w-full">
+              <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>
+                Subscribe To Our Newsletter
+              </h1>
+              <p className={`${poppins.className} text-gray-800 mt-4 text-sm`}>
+                Stay updated with the latest news and offers
+              </p>
+
+              <div className="mt-4">
+                <input
+                  type="email"
+                  placeholder="Enter Your Email"
+                  className="placeholder:text-gray-600 rounded-2xl border py-2 px-4 border-gray-500 w-full max-w-md"
+                />
+                <button className="mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
+                  Subscribe
+                </button>
+              </div>
+            </div>
+            {/*Right Side - Image*/}
+            <div className="flex-1 flex justify-center lg:justify-end w-full">
+              <Image
+                src="/email.png"
+                alt="Newsletter Illustration"
+                width={500}
+                height={500}
+                className="w-full max-w-xs sm:max-w-sm lg:w-80 lg:h-80 h-auto rounded-lg object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -322,20 +338,22 @@ export default function Home() {
       {/* Call to Action Section - Responsive */}
       <section className="py-12 sm:py-16 md:py-20 bg-gray-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8">
-            Ready to Get Started?
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-gray-300 max-w-2xl mx-auto px-4">
-            Join thousands of satisfied customers who trust our services
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
-            <button className="bg-blue-600 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
-              Contact Us
-            </button>
-            <button className="bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
-              Learn More
-            </button>
-          </div>
+          <p>© 2022 Copyright: Verg Realty All Rights Reserved</p>
+            <hr className="border-t border-gray-300 w-1/2 mx-auto mb-6 mt-6"></hr>
+            <div className="flex justify-center items-center">
+              <a href="#" className="hover:text-blue-600 transition-colors">
+                <FaFacebookF size={24} />
+              </a>
+              <a href="#" className="mx-6 hover:text-pink-500 transition-colors">
+                <FaTwitter size={24}/>
+              </a>
+              <a href="#" className="hover:text-purple-600 transition-colors">
+                <FaInstagram size={24}/>
+              </a>
+              <a href="#" className="ml-6 hover:text-blue-700 transition-colors">
+                <FaLinkedinIn size={24}/>
+              </a>
+            </div>
         </div>
       </section>
     </main>
