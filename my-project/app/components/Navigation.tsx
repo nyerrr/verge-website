@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {Poppins, Roboto} from 'next/font/google'
+import { usePathname } from 'next/navigation'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -21,7 +22,8 @@ export default function Navigation() {
   const [open, setOpen] = useState(false)
   const panelRef = useRef<HTMLElement | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement | null>(null)
-
+  const pathname = usePathname()
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   useEffect(() => {
     // prevent background scroll when menu is open
     if (open) {
@@ -105,17 +107,29 @@ export default function Navigation() {
                 width={180}
                 height={160}
                 priority
-                className="w-auto h-14 md:h-28"
+                className="w-auto h-20 md:h-28"
               />
             </Link>
               {/* Center / Desktop nav */}
             <nav className="hidden md:flex md:space-x-4 text-black">
-              <Link href="/" className="px-3 py-2 rounded hover:bg-gray-100">Home</Link>
-              <Link href="/about" className="px-3 py-2 rounded hover:bg-gray-100">About us</Link>
-              <Link href="/buy" className="px-3 py-2 rounded hover:bg-gray-100">Buy</Link>
-              <Link href="/sell" className="px-3 py-2 rounded hover:bg-gray-100">Sell</Link>
-              <Link href="/rent" className="px-3 py-2 rounded hover:bg-gray-100">Rent</Link>
-              <Link href="/contact" className="px-3 py-2 rounded hover:bg-gray-100">Contact Us</Link>
+              <Link href="/" className={`px-3 py-2 rounded hover:bg-gray-100 ${pathname === '/' ? 'border-b-2 border-black font-bold' : ''}`}>
+              Home
+              </Link>
+              <Link href="/about" className={`px-3 py-2 rounded hover:bg-gray-100 ${pathname === '/about' ? 'border-b-2 border-black font-bold' : ''}`}>
+              About us
+              </Link>
+              <Link 
+                href="/buy" 
+                className={`px-3 py-2 rounded hover:bg-gray-100 ${pathname === '/buy' ? 'border-b-2 border-black font-bold' : ''}`}
+              >
+                Buy
+                
+
+                
+              </Link>
+              <Link href="/sell" className={`px-3 py-2 rounded hover:bg-gray-100 ${pathname === '/sell' ? 'border-b-2 border-black font-bold' : ''}`}>Sell</Link>
+              <Link href="/rent" className={`px-3 py-2 rounded hover:bg-gray-100 ${pathname === '/rent' ? 'border-b-2 border-black font-bold' : ''}`}>Rent</Link>
+              <Link href="/contact" className={`px-3 py-2 rounded hover:bg-gray-100 ${pathname === '/contact' ? 'border-b-2 border-black font-bold' : ''}`}>Contact Us</Link>
             </nav>
           </div>
 
