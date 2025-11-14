@@ -248,7 +248,7 @@ export default function Home() {
             {/*Card 1*/}
             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
               <Image
-                src="/The_Albany1.png"
+                src="/Rent or Buy.jpg"
                 alt="News Image 1"
                 width={400}
                 height={400}
@@ -273,7 +273,7 @@ export default function Home() {
             {/*Card 2*/}
             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
               <Image
-                src="/NUVALI-PARK-35.png"
+                src="/architecture.jpg"
                 alt="News Image 2"
                 width={400}
                 height={400}
@@ -283,7 +283,7 @@ export default function Home() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">
                   Tips in Designing your 1st House
                 </h3>
-                <p className="text-md text-gray-800 mb-4">
+                <p className="text-md text-gray-800 mb-4 text-justify">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. 
                   Nobis vel dignissimos, asperiores necessitatibus 
                   velit corporis, eligendi voluptatem, quos consectetur odit 
@@ -298,9 +298,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+      <section className="bg-white mx-auto px-4 sm:px-8 lg:px-16 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
             {/*Left Side - Text*/}
             <div className="flex-1 w-full">
               <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>
@@ -314,7 +314,7 @@ export default function Home() {
                 <input
                   type="email"
                   placeholder="Enter Your Email"
-                  className="placeholder:text-gray-600 rounded-2xl border py-2 px-4 border-gray-500 w-full max-w-md"
+                  className="placeholder:text-gray-600 rounded-2xl border py-2 px-4 border-gray-500 w-full max-w-md text-black"
                 />
                 <button className="mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
                   Subscribe
@@ -328,7 +328,7 @@ export default function Home() {
                 alt="Newsletter Illustration"
                 width={500}
                 height={500}
-                className="w-full max-w-xs sm:max-w-sm lg:w-80 lg:h-80 h-auto rounded-lg object-cover"
+                className="w-48 sm:w-64 lg:w-80 lg:h-80 h-auto rounded-lg object-cover"
               />
             </div>
           </div>
