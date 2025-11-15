@@ -47,7 +47,7 @@ export default function About() {
                   alt="About 2nd section image"
                   width={400}
                   height={400}
-                  className="object-cover rounded-xl w-full h-auto shadow-lg"
+                  className="object-cover rounded-xl w-full h-auto"
                 />
               </div>
             </div>
