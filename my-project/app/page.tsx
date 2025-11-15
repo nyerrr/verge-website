@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <main className="flex-1">
       {/* Hero Section with Carousel - Responsive Height */}
-      <section className="h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] relative overflow-hidden">
+      <section className="relative overflow-hidden" style={{ height: 'calc(100vh - 8rem)' }}>
         {/* Carousel Container */}
         <div className="absolute inset-0 w-full h-full">
           {images.map((image, index) => (
@@ -239,7 +239,7 @@ export default function Home() {
             Real Estate News
           </h2>
           
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-3xl mx-auto">
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-3xl mx-auto text-justify">
             We are committed to providing the best real estate services with a focus on customer satisfaction, integrity, and professionalism. Our experienced agents are here to help you find your dream home or sell your property with ease.
           </p>
 
@@ -298,7 +298,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white mx-auto px-4 sm:px-8 lg:px-16 py-8">
+      <section className="bg-yellow-200 mx-auto px-4 sm:px-8 lg:px-16 py-8 border border-gray-300 p-6">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
             {/*Left Side - Text*/}
