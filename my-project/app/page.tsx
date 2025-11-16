@@ -316,7 +316,7 @@ export default function Home() {
                   placeholder="Enter Your Email"
                   className="placeholder:text-gray-600 rounded-2xl border py-2 px-4 border-gray-500 w-full max-w-md text-black"
                 />
-                <button className="mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
+                <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
                   Subscribe
                 </button>
               </div>

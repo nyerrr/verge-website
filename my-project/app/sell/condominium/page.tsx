@@ -23,7 +23,7 @@ interface Property {
   status: string
 }
 
-export default function Condos() {
+export default function Condo() {
   const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
@@ -121,7 +121,7 @@ export default function Condos() {
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
           <Image
-            src="/buildings.jpg"
+            src="/buildings2.jpg"
             alt="buildings"
             fill
             className="object-cover object-center"
@@ -131,13 +131,13 @@ export default function Condos() {
         <div className="absolute inset-0 bg-black/50 z-10" />
         <div className="absolute inset-0 flex flex-col justify-center z-20 text-white px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24">
           <p className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">
-            Ready for Occupancy
+            Pre-Selling Properties
           </p>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-2 sm:mb-3 md:mb-4">
-            Your Dream Home Awaits
+            Find Your Dream Home
           </h1>
           <p className="text-sm sm:text-base md:text-lg max-w-2xl">
-            Quality homes ready to move in now with flexible financing options
+            Exclusive pre-selling properties with flexible payment terms and unbeatable deals
           </p>
         </div>
       </section>
