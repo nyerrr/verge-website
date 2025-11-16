@@ -121,7 +121,7 @@ export default function House() {
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
           <Image
-            src="/buildings.jpg"
+            src="/buildings2.jpg"
             alt="buildings"
             fill
             className="object-cover object-center"
