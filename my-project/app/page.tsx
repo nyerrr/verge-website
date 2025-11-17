@@ -201,7 +201,8 @@ export default function Home() {
               eligendi voluptatem, quos consectetur odit quam iste. 
               Mollitia repellat impedit, blanditiis iste facilis sed voluptas.
             </p>
-            <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
+            <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-lg font-semibold 
+            transition duration-300 hover:shadow-[0_0_20px_black] w-48 mx-auto block">
               See More
             </button>
           </div>
@@ -298,64 +299,81 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-yellow-200 mx-auto px-4 sm:px-8 lg:px-16 py-8 border border-gray-300 p-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
-            {/*Left Side - Text*/}
-            <div className="flex-1 w-full">
-              <h1 className={`${poppins.className} font-bold text-gray-800 text-4xl`}>
-                Subscribe To Our Newsletter
-              </h1>
-              <p className={`${poppins.className} text-gray-800 mt-4 text-sm`}>
-                Stay updated with the latest news and offers
-              </p>
-
-              <div className="mt-4">
-                <input
-                  type="email"
-                  placeholder="Enter Your Email"
-                  className="placeholder:text-gray-600 rounded-2xl border py-2 px-4 border-gray-500 w-full max-w-md text-black"
-                />
-                <button className="cursor-pointer mt-4 bg-black text-white border-2 border-black px-6 py-2 rounded-2xl font-semibold transition duration-300 hover:shadow-[0_0_20px_black]">
-                  Subscribe
-                </button>
+      {/* Newsletter Section - Enhanced */}
+            <section className="bg-linear-to-br from-gray-100 via-gray-50 to-white px-4 sm:px-6 md:px-8 lg:px-16 py-12 sm:py-14 md:py-16 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gray-200/50 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-gray-200/50 rounded-full blur-3xl"></div>
+              
+              <div className="max-w-5xl mx-auto relative z-10">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+                  {/* Text Side */}
+                  <div className="flex-1 w-full text-center lg:text-left">
+                    <div className="mb-4">
+                      <span className="text-xs md:text-sm font-semibold uppercase tracking-widest text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2">
+                        Stay Updated
+                      </span>
+                    </div>
+                    <h2 className={`${poppins.className} font-bold text-gray-900 text-3xl sm:text-4xl md:text-5xl mb-4 leading-tight`}>
+                      Subscribe To Our
+                      <span className="block">
+                        Newsletter
+                      </span>
+                    </h2>
+                    <p className={`${poppins.className} text-gray-600 text-base sm:text-lg mb-6 leading-relaxed`}>
+                      Get exclusive updates on new properties, special offers, and real estate insights
+                    </p>
+      
+                    <div className="space-y-3 sm:space-y-4">
+                      <input
+                        type="email"
+                        placeholder="Enter Your Email"
+                        className="placeholder:text-gray-500 rounded-2xl border-2 border-gray-300 py-3 sm:py-4 px-5 w-full max-w-md text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all bg-white shadow-sm"
+                      />
+                      <button className="cursor-pointer w-full sm:w-auto bg-black text-white border-2 border-black px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-bold transition-all duration-300 hover:bg-gray-800 hover:border-gray-800 hover:shadow-lg hover:shadow-gray-500/50 hover:scale-105 text-sm sm:text-base">
+                        Subscribe Now
+                      </button>
+                    </div>
+                  </div>
+      
+                  {/* Image Side */}
+                  <div className="flex-1 flex justify-center lg:justify-end w-full">
+                    <Image
+                      src="/email.png"
+                      alt="Newsletter Illustration"
+                      width={500}
+                      height={500}
+                      className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 rounded-2xl object-cover shadow-2xl"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            {/*Right Side - Image*/}
-            <div className="flex-1 flex justify-center lg:justify-end w-full">
-              <Image
-                src="/email.png"
-                alt="Newsletter Illustration"
-                width={500}
-                height={500}
-                className="w-48 sm:w-64 lg:w-80 lg:h-80 h-auto rounded-lg object-cover"
-              />
-            </div>
+            </section>
+
+      {/* Footer - Enhanced */}
+      <footer className="py-12 sm:py-14 md:py-16 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent"></div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <p className="text-sm sm:text-base md:text-lg mb-6 text-gray-300">
+            © 2024 Copyright: <span className="font-bold text-white">Verg Realty</span> - All Rights Reserved
+          </p>
+          <hr className="border-t border-gray-600 w-3/4 sm:w-1/2 mx-auto mb-6" />
+          <div className="flex justify-center items-center gap-5 sm:gap-7 md:gap-9">
+            <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              <FaFacebookF size={20} />
+            </a>
+            <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              <FaTwitter size={20} />
+            </a>
+            <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              <FaInstagram size={20} />
+            </a>
+            <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              <FaLinkedinIn size={20} />
+            </a>
           </div>
         </div>
-      </section>
-
-      {/* Call to Action Section - Responsive */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-900 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>© 2022 Copyright: Verg Realty All Rights Reserved</p>
-            <hr className="border-t border-gray-300 w-1/2 mx-auto mb-6 mt-6"></hr>
-            <div className="flex justify-center items-center">
-              <a href="#" className="hover:text-blue-600 transition-colors">
-                <FaFacebookF size={24} />
-              </a>
-              <a href="#" className="mx-6 hover:text-pink-500 transition-colors">
-                <FaTwitter size={24}/>
-              </a>
-              <a href="#" className="hover:text-purple-600 transition-colors">
-                <FaInstagram size={24}/>
-              </a>
-              <a href="#" className="ml-6 hover:text-blue-700 transition-colors">
-                <FaLinkedinIn size={24}/>
-              </a>
-            </div>
-        </div>
-      </section>
+      </footer>
     </main>
   )
 }
