@@ -35,8 +35,8 @@ export default function Lot() {
   const properties: Property[] = [
     {
       id: 1,
-      image: "/Tivoli.jpg",
-      title: "Mandaluyong City",
+      image: "/Forbes_Park.jpg",
+      title: "Morong Bataan",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱3,500,000",
       bedrooms: "3",
@@ -46,8 +46,8 @@ export default function Lot() {
     },
     {
       id: 2,
-      image: "/Axis-Residences-Mandaluyong.jpg",
-      title: "Makati City",
+      image: "/Pasig.jpg",
+      title: "Pasig City",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱5,800,000",
       bedrooms: "4",
@@ -57,8 +57,8 @@ export default function Lot() {
     },
     {
       id: 3,
-      image: "/Park_Residences.jpg",
-      title: "Sta.Rosa City",
+      image: "/e7445f02491e0b.jpg",
+      title: "Mandaluyong City",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱2,200,000",
       bedrooms: "2",
@@ -68,8 +68,8 @@ export default function Lot() {
     },
     {
       id: 4,
-      image: "/San_Juan.jpg",
-      title: "San Juan City",
+      image: "/Valenzuela City.jpeg",
+      title: "Cebu City",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱4,500,000",
       bedrooms: "3",
@@ -79,8 +79,8 @@ export default function Lot() {
     },
     {
       id: 5,
-      image: "/NUVALI.jpeg",
-      title: "San Pedro City",
+      image: "/Antipolo.jpg",
+      title: "Antipolo City",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱6,300,000",
       bedrooms: "4",
@@ -90,8 +90,8 @@ export default function Lot() {
     },
     {
       id: 6,
-      image: "/bonifacio-high-street.PNG",
-      title: "Bonifacio Global City",
+      image: "/Vigan.jpeg",
+      title: "Vigan, Ilocos Sur",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱8,500,000",
       bedrooms: "5",
@@ -101,8 +101,19 @@ export default function Lot() {
     },
     {
       id: 7,
-      image: "/cebu_IT_Park.jpg",
-      title: "Cebu City",
+      image: "/Mactan.jpg",
+      title: "Mactan, Cebu",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
+      price: "₱4,800,000",
+      bedrooms: "3",
+      bathrooms: "3",
+      area: "160 sqm",
+      status: "For Sale"
+    },
+    {
+      id:8,
+      image:"/Zambales.jpg",
+      title:"Zambales",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱4,800,000",
       bedrooms: "3",

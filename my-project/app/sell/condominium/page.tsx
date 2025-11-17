@@ -35,8 +35,8 @@ export default function Condominium() {
   const properties: Property[] = [
     {
       id: 1,
-      image: "/Tivoli.jpg",
-      title: "Mandaluyong City",
+      image: "/PMW.jpg",
+      title: "Park Mckinley West",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱3,500,000",
       bedrooms: "3",
@@ -46,8 +46,8 @@ export default function Condominium() {
     },
     {
       id: 2,
-      image: "/Axis-Residences-Mandaluyong.jpg",
-      title: "Makati City",
+      image: "/Axis-Residences-Mandaluyong.jpg.webp",
+      title: "One Rockwell",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱5,800,000",
       bedrooms: "4",
@@ -57,8 +57,8 @@ export default function Condominium() {
     },
     {
       id: 3,
-      image: "/Park_Residences.jpg",
-      title: "Sta.Rosa City",
+      image: "/Harbour_Park_Residences.jpeg",
+      title: "Harbour Park Residences",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱2,200,000",
       bedrooms: "2",
@@ -68,8 +68,8 @@ export default function Condominium() {
     },
     {
       id: 4,
-      image: "/San_Juan.jpg",
-      title: "San Juan City",
+      image: "/avida_astern.jpeg",
+      title: "Avida astern",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱4,500,000",
       bedrooms: "3",
@@ -80,7 +80,7 @@ export default function Condominium() {
     {
       id: 5,
       image: "/NUVALI.jpeg",
-      title: "San Pedro City",
+      title: "Joya Lofts and Towers",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱6,300,000",
       bedrooms: "4",
@@ -90,8 +90,8 @@ export default function Condominium() {
     },
     {
       id: 6,
-      image: "/bonifacio-high-street.PNG",
-      title: "Bonifacio Global City",
+      image: "/avida_astern.jpeg",
+      title: "Light Reisdences",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱8,500,000",
       bedrooms: "5",
@@ -102,7 +102,18 @@ export default function Condominium() {
     {
       id: 7,
       image: "/cebu_IT_Park.jpg",
-      title: "Cebu City",
+      title: "Trion Towers",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
+      price: "₱4,800,000",
+      bedrooms: "3",
+      bathrooms: "3",
+      area: "160 sqm",
+      status: "For Sale"
+    },
+    {
+      id: 8,
+      image: "/cebu_IT_Park.jpg",
+      title: "Shangrila_BGC",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱4,800,000",
       bedrooms: "3",

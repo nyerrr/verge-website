@@ -97,7 +97,8 @@ export default function About() {
                     placeholder="Enter Your Email"
                     className="placeholder:text-gray-500 rounded-2xl border-2 border-gray-300 py-3 sm:py-4 px-5 w-full max-w-md text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all bg-white shadow-sm"
                     />
-                    <button className="cursor-pointer w-full sm:w-auto bg-black text-white border-2 border-black px-8 sm:px-10 py-3 sm:py-4 rounded-2xl font-bold transition-all duration-300 hover:bg-gray-800 hover:border-gray-800 hover:shadow-lg hover:shadow-gray-500/50 hover:scale-105 text-sm sm:text-base">
+                    <button className="cursor-pointer w-full sm:w-auto bg-black text-white border-2 border-black px-8 sm:px-10 
+                    py-3 sm:py-4 rounded-2xl font-bold transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 hover:scale-105 text-sm sm:text-base">
                       Subscribe Now
                     </button>
                   </div>
