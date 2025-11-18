@@ -104,8 +104,8 @@ export default function Navigation() {
       icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z',
       label: 'Rent',
       items: [
-        { href: '/rent/houses', label: 'Short Term' },
-        { href: '/rent/condos', label: 'Long Term' },
+        { href: '/rent/short', label: 'Short Term' },
+        { href: '/rent/long', label: 'Long Term' },
       ]
     }
   }
@@ -226,6 +226,12 @@ export default function Navigation() {
                 className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
               >
                 Log in
+              </Link>
+              <Link
+                href="/signup"
+                className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-200 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+              >
+                Sign-up
               </Link>
 
               {/* Mobile Menu Button */}

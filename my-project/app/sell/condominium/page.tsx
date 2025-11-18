@@ -79,7 +79,7 @@ export default function Condominium() {
     },
     {
       id: 5,
-      image: "/NUVALI.jpeg",
+      image: "/Joya.jpg",
       title: "Joya Lofts and Towers",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱6,300,000",
@@ -90,7 +90,7 @@ export default function Condominium() {
     },
     {
       id: 6,
-      image: "/avida_astern.jpeg",
+      image: "/Light_Residences.jpg",
       title: "Light Reisdences",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱8,500,000",
@@ -101,7 +101,7 @@ export default function Condominium() {
     },
     {
       id: 7,
-      image: "/cebu_IT_Park.jpg",
+      image: "/Trion Towers.jpg",
       title: "Trion Towers",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱4,800,000",
@@ -112,8 +112,8 @@ export default function Condominium() {
     },
     {
       id: 8,
-      image: "/cebu_IT_Park.jpg",
-      title: "Shangrila_BGC",
+      image: "/Shangrila_BGC.jpg",
+      title: "Shangrila BGC",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱4,800,000",
       bedrooms: "3",
