@@ -107,7 +107,7 @@ export default function Contact() {
     </div>
 
     {/* Newsletter Section - Responsive */}
-    <section className="bg-gradient-to-br from-gray-100 to-white px-4 sm:px-8 md:px-16 py-12 sm:py-16">
+    <section className="bg-linear-to-br from-gray-100 to-white px-4 sm:px-8 md:px-16 py-12 sm:py-16">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8">
           <div className="flex-1 text-center lg:text-left w-full">
@@ -145,8 +145,8 @@ export default function Contact() {
     </section>
 
     {/* Footer - Responsive */}
-    <footer className="py-8 sm:py-12 md:py-14 lg:py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+    <footer className="py-8 sm:py-12 md:py-14 lg:py-16 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+      <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent"></div>
         
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <p className="text-xs sm:text-sm md:text-base lg:text-lg mb-4 sm:mb-6 text-gray-300">
