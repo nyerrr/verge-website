@@ -3,12 +3,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import {HiEye, HiEyeOff} from 'react-icons/hi'
+import PageTransition from '../components/PageTransition'
 
 export default function Signup() {
 
     const [showPassword, setShowPassword] = useState(false);
 
     return (
+        <PageTransition>
         <div className="relative min-h-screen w-full flex items-center justify-center">
             {/* Background Image */}
             <Image
@@ -146,5 +148,6 @@ export default function Signup() {
                 </form>
             </div>
         </div>
+        </PageTransition>
     )
 }

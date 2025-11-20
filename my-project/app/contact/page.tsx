@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import {Poppins} from 'next/font/google'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa'
+import PageTransition from '../components/PageTransition'
 
 const poppins = Poppins ({
   subsets:["latin"],
@@ -11,6 +12,7 @@ const poppins = Poppins ({
 
 export default function Contact() {
   return(
+    <PageTransition>
     <>
     {/* Contact Section - Responsive */}
     <div className="flex flex-col lg:flex-row bg-white min-h-screen">
@@ -170,5 +172,6 @@ export default function Contact() {
       </div>
     </footer>
     </>
+    </PageTransition>
   )
 }

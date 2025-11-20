@@ -1,6 +1,9 @@
+"use client"
+
 import Image from "next/image";
 import {Poppins} from 'next/font/google'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn} from 'react-icons/fa';
+import PageTransition from '../components/PageTransition'
 
 const poppins = Poppins({
   weight: ["400","700"],
@@ -10,6 +13,7 @@ const poppins = Poppins({
 export default function About() {
   return (
     <>
+      <PageTransition>
       {/* Hero Section - Improved responsive margins */}
       <section className="bg-[url('/buildings.jpg')] bg-cover bg-center bg-fixed h-[60vh] sm:h-[70vh] md:h-[75vh] lg:h-[80vh] flex items-center justify-center relative">
         <div className="absolute inset-0 bg-black/50"></div>
@@ -142,6 +146,7 @@ export default function About() {
                 </div>
                 </div>
               </footer>
+    </PageTransition>
     </>
   )
 }

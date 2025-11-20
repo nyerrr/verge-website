@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Poppins } from 'next/font/google'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
+import PageTransition from '../../components/PageTransition'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -124,6 +125,7 @@ export default function Condominium() {
   ]
 
   return (
+    <PageTransition>
     <div className="bg-white min-h-screen">
       {/* Hero Section - Enhanced with Modern Typography */}
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] xl:h-[600px] overflow-hidden">
@@ -341,5 +343,6 @@ export default function Condominium() {
         </div>
       </footer>
     </div>
+    </PageTransition>
   )
 }

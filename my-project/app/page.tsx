@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {Poppins} from 'next/font/google'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn} from 'react-icons/fa';
+import PageTransition from './components/PageTransition'
+
 
 
 const poppins = Poppins({
@@ -52,6 +54,7 @@ export default function Home() {
 
   return (
     <main className="flex-1">
+      <PageTransition>
       {/* Hero Section with Carousel - Responsive Height */}
       <section className="relative overflow-hidden" style={{ height: 'calc(100vh - 8rem)' }}>
         {/* Carousel Container */}
@@ -375,6 +378,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      </PageTransition>
     </main>
   )
 }

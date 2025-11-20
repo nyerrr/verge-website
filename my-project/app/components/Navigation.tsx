@@ -112,7 +112,7 @@ export default function Navigation() {
 
   return (
     <>
-      <header className={`${poppins.className} bg-white shadow-xl sticky top-0 left-0 right-0 z-50`}>
+      <header className={`${poppins.className} bg-white shadow-xl sticky top-0 left-0 right-0 z-50 animate-fade-in-up`}>
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-between min-h-10 sm:min-h-11">
             {/* Logo */}
