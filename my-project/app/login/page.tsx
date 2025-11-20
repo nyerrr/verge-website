@@ -53,20 +53,22 @@ export default function Login() {
                         >
                             Password
                         </label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            className=" w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
-                            placeholder="password..."
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                className=" w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
+                                placeholder="password..."
                             
-                        />
-                        {/*EYE ICON*/}
-                        <button type="button" 
-                        onClick={() => setShowPassword(!showPassword)}  
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-black"
-                        >
-                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} /> }
-                        </button>
+                            />
+                            {/*EYE ICON*/}
+                            <button type="button" 
+                            onClick={() => setShowPassword(!showPassword)}  
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-black"
+                            >
+                                {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} /> }
+                            </button>
+                        </div>
                     </div>
                     
                     {/* Submit Button */}

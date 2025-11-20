@@ -124,7 +124,7 @@ export default function Navigation() {
                   width={180}
                   height={160}
                   priority
-                  className="w-auto h-10 sm:h-12 md:h-19 lg:h-20 xl:h-22"
+                  className="w-auto h-14 sm:h-16 md:h-19 lg:h-20 xl:h-22"
                 />
               </Link>
 
@@ -142,7 +142,7 @@ export default function Navigation() {
                     <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                     </svg>
-                    <span className="hidden xl:inline">{item.label}</span>
+                    <span className="hidden lg:inline">{item.label}</span>
                   </Link>
                 ))}
 
@@ -157,7 +157,7 @@ export default function Navigation() {
                       <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menu.icon} />
                       </svg>
-                      <span className="hidden xl:inline">{menu.label}</span>
+                      <span className="hidden lg:inline">{menu.label}</span>
                       <svg className="w-3 h-3 xl:w-4 xl:h-4 group-hover:rotate-180 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
@@ -188,7 +188,7 @@ export default function Navigation() {
                   <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span className="hidden xl:inline">Contact Us</span>
+                  <span className="hidden lg:inline">Contact Us</span>
                 </Link>
               </nav>
             </div>

@@ -23,13 +23,24 @@ export default function Signup() {
             
             {/* Login Form Container */}
             <div 
-                className="relative z-10 w-full max-w-md mx-8 rounded-lg shadow-xl p-8 bg-white  border-2 border-gray-800"
+                className="relative z-10 w-full max-w-md mx-8 my-8 rounded-lg shadow-xl p-8 bg-white  border-2 border-gray-800"
                 
             >
                 <h2 className="text-2xl font-bold mb-6 text-black">Sign-up</h2>
                 
                 <form className="space-y-4">
                     {/* Email Field */}
+                    <div>
+                        <label htmlFor="name" className="text-sm font-medium text-gray-700 mb-1">
+                            Full Name
+                        </label>
+                        <input
+                            type="text"
+                            id="namne"
+                            className="w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
+                            placeholder="type your full name here.."
+                        />
+                    </div>
                     <div>
                         <label 
                             htmlFor="email" 
@@ -53,20 +64,22 @@ export default function Signup() {
                         >
                             Password
                         </label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            className=" w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
-                            placeholder="password..."
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                className=" w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
+                                placeholder="password..."
                             
-                        />
-                        {/*EYE ICON*/}
-                        <button type="button" 
-                        onClick={() => setShowPassword(!showPassword)}  
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-black"
-                        >
-                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} /> }
-                        </button>
+                            />
+                            {/*EYE ICON*/}
+                            <button type="button" 
+                            onClick={() => setShowPassword(!showPassword)}  
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-black"
+                            >
+                                {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} /> }
+                            </button>
+                        </div>
                     </div>
                      <div className="relative w-full mb-4">
                         <label 
@@ -75,20 +88,51 @@ export default function Signup() {
                         >
                             Confirm Password
                         </label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            className=" w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
-                            placeholder="confirm password..."
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                className=" w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
+                                placeholder="confirm password..."
                             
+                            />
+                            {/*EYE ICON*/}
+                            <button type="button" 
+                            onClick={() => setShowPassword(!showPassword)}  
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-black"
+                            >
+                                {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} /> }
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex flex-row gap-4">
+                        <div className="flex flex-col">
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1 ">
+                            Phone#
+                        </label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            className="placeholder:text-sm w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
+                            placeholder="type your number here..."
                         />
-                        {/*EYE ICON*/}
-                        <button type="button" 
-                        onClick={() => setShowPassword(!showPassword)}  
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-black"
+                        </div>
+                        <div className="flex flex-col">
+                        <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1">
+                            User Type
+                        </label>
+                        <select 
+                        id="userType" 
+                        className="text-sm font-medium  w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                        defaultValue=""
                         >
-                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} /> }
-                        </button>
+                        <option value="" disabled>Select user type</option>   
+                        <option value="buyer">Buyer</option>
+                        <option value="renter">Renter</option>
+                        <option value="seller">Seller</option>
+                        <option value="agent">Agent / Broker</option>
+                        </select>
+                        </div>
                     </div>
                     
                     {/* Submit Button */}
@@ -96,9 +140,9 @@ export default function Signup() {
                         type="submit" 
                         className="w-full py-2 px-4 text-white bg-black rounded-full cursor-pointer hover:scale-105 mt-2 transition duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)]"
                     >
-                        Sign-in
+                        Sign-Up
                     </button>
-                
+                    
                 </form>
             </div>
         </div>
