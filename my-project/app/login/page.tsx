@@ -15,39 +15,39 @@ export default function Login() {
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError('')
-        setIsLoading(true)
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
 
-        try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            })
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        })
 
-            const data = await response.json()
+        const data = await response.json()
 
-            if (!response.ok) {
-                throw new Error(data.error)
-            }
-
-            // Save user data
-            localStorage.setItem('userData', JSON.stringify(data.user))
-
-            // Redirect based on userType
-            if (data.user.userType === 'admin') {
-                router.push('/admin')  // Go to admin page
-            } else {
-                router.push('/')  // Go to home page
-            }
-            
-        } catch (err: any) {
-            setError(err.message || 'Login failed')
-        } finally {
-            setIsLoading(false)
+        if (!response.ok) {
+            throw new Error(data.error)
         }
+
+        // Save user data
+        localStorage.setItem('userData', JSON.stringify(data.user))
+
+        // Redirect based on userType with full page reload
+        if (data.user.userType === 'admin') {
+            window.location.href = '/admin'
+        } else {
+            window.location.href = '/'
+        }
+        
+    } catch (err: any) {
+        setError(err.message || 'Login failed')
+    } finally {
+        setIsLoading(false)
     }
+}
 
     return (
         <PageTransition>

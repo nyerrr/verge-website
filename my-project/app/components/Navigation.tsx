@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Poppins } from 'next/font/google'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -19,7 +19,29 @@ export default function Navigation() {
   const panelRef = useRef<HTMLElement | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement | null>(null)
   const pathname = usePathname()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userName, setUserName] = useState('')
+  const router = useRouter()
 
+  // Check login status
+  useEffect (() => {
+    const userData = localStorage.getItem('userData')
+      if (userData) {
+        const user = JSON.parse(userData)
+        setIsLoggedIn (true)
+        setUserName (user.name)
+      }
+  }, [])
+
+  //Logout
+  const handleLogout = () => {
+    localStorage.removeItem('userData')
+    localStorage.removeItem('token')
+    setIsLoggedIn (false)
+    setUserName('')
+    window.location.href = '/login'
+    setOpen(false)
+  }
   // Prevent background scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -220,19 +242,33 @@ export default function Navigation() {
                 </div>
               </div>
 
-              {/* Desktop Login Button */}
-              <Link
-                href="/login"
-                className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-200 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-              >
-                Sign-up
-              </Link>
+              {/* Desktop Auth Buttons - Show/Hide based on login status */}
+  {isLoggedIn ? (
+    <div className="hidden lg:flex items-center gap-3">
+      <span className="text-sm text-gray-700">Hi, {userName}</span>
+      <button
+        onClick={handleLogout}
+        className=" cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
+      >
+        Logout
+      </button>
+    </div>
+  ) : (
+    <>
+      <Link
+        href="/login"
+        className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+      >
+        Log in
+      </Link>
+      <Link
+        href="/signup"
+        className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-200 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+      >
+        Sign-up
+      </Link>
+    </>
+  )}
 
               {/* Mobile Menu Button */}
               <button
@@ -373,22 +409,38 @@ export default function Navigation() {
             </Link>
 
             {/* Mobile Auth Buttons */}
-            <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="block text-center px-4 py-3 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                onClick={() => setOpen(false)}
-                className="block text-center px-4 py-3 bg-white border-2 border-gray-900 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
-              >
-                Sign up
-              </Link>
-            </div>
+<div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
+  {isLoggedIn ? (
+    <>
+      <div className="px-4 py-2 text-center text-gray-700">
+        Logged in as <span className="font-semibold">{userName}</span>
+      </div>
+      <button
+        onClick={handleLogout}
+        className="block w-full text-center px-4 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 text-sm sm:text-base font-semibold"
+      >
+        Logout
+      </button>
+    </>
+  ) : (
+    <>
+      <Link
+        href="/login"
+        onClick={() => setOpen(false)}
+        className="block text-center px-4 py-3 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
+      >
+        Log in
+      </Link>
+      <Link
+        href="/signup"
+        onClick={() => setOpen(false)}
+        className="block text-center px-4 py-3 bg-white border-2 border-gray-900 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
+      >
+        Sign up
+      </Link>
+    </>
+  )}
+</div>
           </nav>
         </div>
       </aside>

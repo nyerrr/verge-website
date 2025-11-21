@@ -33,6 +33,8 @@ export default function Lot() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  
+
   const properties: Property[] = [
     {
       id: 1,
