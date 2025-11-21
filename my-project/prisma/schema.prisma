@@ -12,6 +12,8 @@ model User {
   email     String   @unique
   password  String
   name      String
-  userType  String   // "admin" or "user"
+  phone     String   // Phone number field
+  userType  String   // "buyer", "seller", "renter", "agent", "admin"
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
