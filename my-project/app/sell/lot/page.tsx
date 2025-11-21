@@ -94,13 +94,12 @@ export default function Lot() {
       features: property.features,
     })
   } else if (action === "schedule") {
-    // Only allow scheduling if logged in
     if (!isLoggedIn) {
       setShowLoginPrompt(true)
       setTimeout(() => setShowLoginPrompt(false), 3000)
       return
     }
-    console.log("Schedule tour for:", property.title)
+     console.log("Schedule tour for:", property.title)
   }
 }
 
