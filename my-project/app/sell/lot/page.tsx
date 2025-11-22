@@ -269,7 +269,6 @@ export default function Lot() {
         <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] xl:h-[600px] overflow-hidden">
           <div
             className="absolute inset-0"
-            style={{ transform: `translateY(${scrollY * 0.5}px)` }}
           >
             <Image
               src="/buildings2.jpg"

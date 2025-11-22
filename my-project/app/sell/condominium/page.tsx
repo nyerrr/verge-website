@@ -87,19 +87,19 @@ export default function Condominium() {
     {
       id: 1,
       image: "/PMW.jpg",
+      title: "Park Mckinley West",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
+      price: "₱3,500,000",
+      bedrooms: "3",
+      bathrooms: "2",
+      area: "120 sqm",
+      status: "For Sale",
+      location: "Pak, Mckinley West",
       images: [
         "/1_Bedroom.jpg",
         "/Grand Hyatt.jpeg",
         "/1_Bedroom.jpg",
       ],
-      title: "Park Mckinley West",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱3,500,000",
-      location: "Pak, Mckinley West",
-      bedrooms: "3",
-      bathrooms: "2",
-      area: "120 sqm",
-      status: "For Sale",
       floorLevel: "Ground Floor",
       parking: "2 slots",
       yearBuilt: "2023",
@@ -137,7 +137,40 @@ export default function Condominium() {
       bedrooms: "4",
       bathrooms: "3",
       area: "180 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 3,
@@ -148,7 +181,40 @@ export default function Condominium() {
       bedrooms: "2",
       bathrooms: "2",
       area: "80 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 4,
@@ -159,7 +225,40 @@ export default function Condominium() {
       bedrooms: "3",
       bathrooms: "2",
       area: "150 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 5,
@@ -170,7 +269,40 @@ export default function Condominium() {
       bedrooms: "4",
       bathrooms: "3",
       area: "200 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 6,
@@ -181,7 +313,40 @@ export default function Condominium() {
       bedrooms: "5",
       bathrooms: "4",
       area: "250 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 7,
@@ -192,7 +357,40 @@ export default function Condominium() {
       bedrooms: "3",
       bathrooms: "3",
       area: "160 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 8,
@@ -203,7 +401,40 @@ export default function Condominium() {
       bedrooms: "3",
       bathrooms: "3",
       area: "160 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      location: "Pak, Mckinley West",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     }
   ]
 
@@ -211,7 +442,7 @@ export default function Condominium() {
     if (action === "view") {
       // Allow action to view details
       setSelectedProperty({
-        id: property.id,
+      id: property.id,
       title: property.title,
       price: property.price,
       location: property.location || "Unknown Location",
@@ -244,7 +475,6 @@ export default function Condominium() {
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] xl:h-[600px] overflow-hidden">
         <div
           className="absolute inset-0"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
           <Image
             src="/buildings2.jpg"

@@ -60,7 +60,7 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-50 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+            className="cursor-pointer absolute top-4 right-4 z-50 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
           >
             <FaTimes className="text-gray-800 text-xl" />
           </button>
@@ -80,13 +80,13 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+                  className="cursor-pointer absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
                 >
                   <FaChevronLeft className="text-gray-800" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+                  className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
                 >
                   <FaChevronRight className="text-gray-800" />
                 </button>
@@ -102,13 +102,13 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
             <div className="absolute bottom-4 right-4 flex gap-2">
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all ${isFavorite ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-800'}`}
+                className={`cursor-pointer w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all ${isFavorite ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-800'}`}
               >
                 <FaHeart />
               </button>
               <button
                 onClick={handleShare}
-                className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+                className="cursor-pointer w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
               >
                 <FaShare className="text-gray-800" />
               </button>
@@ -273,15 +273,15 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
                     <p className="text-gray-600">Licensed Real Estate Broker</p>
                   </div>
                   <div className="space-y-3">
-                    <button className="w-full py-3 bg-black text-white rounded-xl font-semibold hover:shadow-[0_0_20px_black] transition-all flex items-center justify-center gap-2">
+                    <button className="cursor-pointer w-full py-3 bg-black text-white rounded-xl font-semibold hover:shadow-[0_0_20px_black] transition-all hover:scale-105 flex items-center justify-center gap-2">
                       <FaPhone />
                       Schedule Viewing
                     </button>
-                    <button className="w-full py-3 bg-white border-2 border-gray-300 text-gray-800 rounded-xl font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                    <button className="cursor-pointer w-full py-3 bg-white border-2 border-gray-300 text-gray-800 rounded-xl font-semibold hover:bg-gray-200 hover:scale-105 transition-all flex items-center justify-center gap-2">
                       <FaEnvelope />
                       Contact Agent
                     </button>
-                    <button className="w-full py-3 bg-white border-2 border-gray-300 text-gray-800 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                    <button className="cursor-pointer w-full py-3 bg-white border-2 border-gray-300 text-gray-800 rounded-xl font-semibold hover:bg-gray-200 hover:scale-105 transition-all">
                       💰 Calculate Mortgage
                     </button>
                   </div>

@@ -138,7 +138,7 @@ export default function Short() {
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
-        <div className="absolute inset-0" style={{ transform: `translateY(${scrollY * 0.45}px)` }}>
+        <div className="absolute inset-0">
           <Image src="/buildings2.jpg" alt="buildings hero" fill className="object-cover" priority />
         </div>
         <div className="absolute inset-0 bg-black/60 z-10" />
