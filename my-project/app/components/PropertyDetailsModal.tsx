@@ -265,13 +265,6 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
               <div className="sticky top-8 space-y-4">
                 {/* Agent Card */}
                 <div className="bg-gray-50 rounded-2xl p-6 shadow-lg">
-                  <div className="text-center mb-6">
-                    <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto mb-4 overflow-hidden">
-                      <Image src="/agent-placeholder.jpg" alt="Agent" width={80} height={80} className="object-cover" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900">Your Agent</h3>
-                    <p className="text-gray-600">Licensed Real Estate Broker</p>
-                  </div>
                   <div className="space-y-3">
                     <button className="cursor-pointer w-full py-3 bg-black text-white rounded-xl font-semibold hover:shadow-[0_0_20px_black] transition-all hover:scale-105 flex items-center justify-center gap-2">
                       <FaPhone />

@@ -7,6 +7,7 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBed, FaBath, FaRul
 import PageTransition from "../../components/PageTransition"
 import PropertyDetailsModal from "../../components/PropertyDetailsModal"
 import { useRouter } from "next/navigation"
+import Link from 'next/link'
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -386,9 +387,11 @@ export default function Lot() {
                     className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
                       View Details
                     </button>
-                    <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
-                      Contact
-                    </button>
+                    <Link href="/contact">
+                      <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
+                        Contact
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

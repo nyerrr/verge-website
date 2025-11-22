@@ -5,6 +5,9 @@ import Image from 'next/image'
 import { Poppins } from 'next/font/google'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
 import PageTransition from '../../components/PageTransition'
+import Link from 'next/link'
+import PropertyDetailsModal from "../../components/PropertyDetailsModal"
+import { useRouter } from "next/navigation"
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -14,24 +17,77 @@ const poppins = Poppins({
 
 interface Property {
   id: number
-  image: string
   title: string
-  description: string
   price: string
+  location?: string
+  status: string
   bedrooms: string
   bathrooms: string
   area: string
+  images?: string[]  // Optional array
+  image: string      // Single main image
+  description: string
+  floorLevel?: string
+  parking?: string
+  yearBuilt?: string
+  propertyId?: string
+  features?: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  }
+}
+
+// Type used for modal, ensuring `images` always exists
+interface ModalProperty {
+  id: number
+  title: string
+  price: string
+  location: string
   status: string
+  bedrooms: string
+  bathrooms: string
+  area: string
+  images: string[]
+  description: string
+  floorLevel?: string
+  parking?: string
+  yearBuilt?: string
+  propertyId?: string
+  features?: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  }
 }
 
 export default function Lot() {
   const [scrollY, setScrollY] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
+  const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    if (selectedProperty) {
+      //prevents from scrolling in the background
+      document.body.style.overflow = "hidden"
+    } else {
+      //Restore scrolling when modal closes
+      document.body.style.overflow = "auto"
+    }
+
+    //cleanup
+    return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [selectedProperty])
 
   const properties: Property[] = [
     {
@@ -243,9 +299,11 @@ export default function Lot() {
                   <button className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
                     View Details
                   </button>
-                  <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
-                    Contact
-                  </button>
+                  <Link href="/contact">
+                      <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
+                        Contact
+                      </button>
+                  </Link>
                 </div>
               </div>
             </div>
