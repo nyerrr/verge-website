@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { Poppins } from 'next/font/google'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
 import PageTransition from '../../components/PageTransition'
+import PropertyDetailsModal from '../../components/PropertyDetailsModal'
+import { useRouter } from 'next/navigation'
 
 const poppins = Poppins({
   subsets: ['latin'],

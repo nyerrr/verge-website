@@ -73,47 +73,35 @@ export default function Lot() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleProtectedAction = (action: string, property: Property) => {
-  if (action === "view") {
-    // Always allow viewing details
-    setSelectedProperty({
-      id: property.id,
-      title: property.title,
-      price: property.price,
-      location: property.location || "Unknown Location",
-      status: property.status,
-      bedrooms: property.bedrooms,
-      bathrooms: property.bathrooms,
-      area: property.area,
-      images: property.images || [property.image],
-      description: property.description,
-      floorLevel: property.floorLevel,
-      parking: property.parking,
-      yearBuilt: property.yearBuilt,
-      propertyId: property.propertyId,
-      features: property.features,
-    })
-  } else if (action === "schedule") {
-    if (!isLoggedIn) {
-      setShowLoginPrompt(true)
-      setTimeout(() => setShowLoginPrompt(false), 3000)
-      return
+  useEffect(() => {
+    if (selectedProperty) {
+      //prevents from scrolling in the background
+      document.body.style.overflow = "hidden"
+    } else {
+      //Restore scrolling when modal closes
+      document.body.style.overflow = "auto"
     }
-     console.log("Schedule tour for:", property.title)
-  }
-}
 
+    //cleanup
+    return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [selectedProperty])
+
+    
+  
   const properties: Property[] = [
     {
       id: 1,
       image: "/Anvaya-Cove-House-Lot-39.jpg",
       images: [
-        "/Anvaya-Cove-House-Lot-39.jpg",
-        "/Anvaya-Cove-House-Lot-39.jpg",
-        "/Anvaya-Cove-House-Lot-39.jpg",
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
       ],
       title: "Morong Bataan",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit...",
+      description: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, 
+      asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur...`,
       price: "₱3,500,000",
       location: "Morong, Bataan",
       bedrooms: "3",
@@ -151,29 +139,126 @@ export default function Lot() {
     {
       id: 2,
       image: "/Pasig.jpg",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
       title: "Pasig City",
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱5,800,000",
+      location: "pasig",
       bedrooms: "4",
       bathrooms: "3",
       area: "180 sqm",
       status: "For Sale",
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2022",
+      propertyId: "PROP-002",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 3,
       image: "/e7445f02491e0b.jpg",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
       title: "Mandaluyong City",
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱2,200,000",
+      location: "pasig",
       bedrooms: "2",
       bathrooms: "2",
       area: "80 sqm",
       status: "For Sale",
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2022",
+      propertyId: "PROP-002",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     // ... add remaining properties
   ]
+
+  const handleProtectedAction = (action: string, property: Property) => {
+  if (action === "view") {
+    // Always allow viewing details
+    setSelectedProperty({
+      id: property.id,
+      title: property.title,
+      price: property.price,
+      location: property.location || "Unknown Location",
+      status: property.status,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      area: property.area,
+      images: property.images || [property.image],
+      description: property.description,
+      floorLevel: property.floorLevel,
+      parking: property.parking,
+      yearBuilt: property.yearBuilt,
+      propertyId: property.propertyId,
+      features: property.features,
+    })
+  } else if (action === "schedule") {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true)
+      setTimeout(() => setShowLoginPrompt(false), 3000)
+      return
+    }
+     console.log("Schedule tour for:", property.title)
+  }
+}
+
 
   return (
     <PageTransition>
@@ -296,11 +381,10 @@ export default function Lot() {
 
                   <div className="flex gap-2 w-full">
                     <button
-  onClick={() => handleProtectedAction('view', property)}
-  className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50"
->
-  View Details
-</button>
+                    onClick={() => handleProtectedAction('view', property)}
+                    className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
+                      View Details
+                    </button>
                     <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
                       Contact
                     </button>
@@ -310,6 +394,82 @@ export default function Lot() {
             ))}
           </div>
         </div>
+        {/* Newsletter Section - Enhanced */}
+              <section className="bg-linear-to-br from-gray-100 via-gray-50 to-white px-4 sm:px-6 md:px-8 lg:px-16 py-12 sm:py-14 md:py-16 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gray-200/50 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-gray-200/50 rounded-full blur-3xl"></div>
+                
+                <div className="max-w-5xl mx-auto relative z-10">
+                  <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+                    {/* Text Side */}
+                    <div className="flex-1 w-full text-center lg:text-left">
+                      <div className="mb-4">
+                        <span className="text-xs md:text-sm font-semibold uppercase tracking-widest text-gray-700 bg-white/80 backdrop-blur-sm px-4 py-2">
+                          Stay Updated
+                        </span>
+                      </div>
+                      <h2 className={`${poppins.className} font-bold text-gray-900 text-3xl sm:text-4xl md:text-5xl mb-4 leading-tight`}>
+                        Subscribe To Our
+                        <span className="block">
+                          Newsletter
+                        </span>
+                      </h2>
+                      <p className={`${poppins.className} text-gray-600 text-base sm:text-lg mb-6 leading-relaxed`}>
+                        Get exclusive updates on new properties, special offers, and real estate insights
+                      </p>
+        
+                      <div className="space-y-3 sm:space-y-4">
+                        <input
+                          type="email"
+                          placeholder="Enter Your Email"
+                          className="placeholder:text-gray-500 rounded-2xl border-2 border-gray-300 py-3 sm:py-4 px-5 w-full max-w-md text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all bg-white shadow-sm"
+                        />
+                        <button className="cursor-pointer w-full sm:w-auto bg-black text-white border-2 border-black px-8 sm:px-10 
+                        py-3 sm:py-4 rounded-2xl font-bold transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 hover:scale-105 text-sm sm:text-base">
+                          Subscribe Now
+                        </button>
+                      </div>
+                    </div>
+        
+                    {/* Image Side */}
+                    <div className="flex-1 flex justify-center lg:justify-end w-full">
+                      <Image
+                        src="/email.png"
+                        alt="Newsletter Illustration"
+                        width={500}
+                        height={500}
+                        className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 rounded-2xl object-cover shadow-2xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+        
+              {/* Footer - Enhanced */}
+              <footer className="py-12 sm:py-14 md:py-16 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+                <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent"></div>
+                
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                  <p className="text-sm sm:text-base md:text-lg mb-6 text-gray-300">
+                    © 2024 Copyright: <span className="font-bold text-white">Verg Realty</span> - All Rights Reserved
+                  </p>
+                  <hr className="border-t border-gray-600 w-3/4 sm:w-1/2 mx-auto mb-6" />
+                  <div className="flex justify-center items-center gap-5 sm:gap-7 md:gap-9">
+                    <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+                      <FaFacebookF size={20} />
+                    </a>
+                    <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+                      <FaTwitter size={20} />
+                    </a>
+                    <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+                      <FaInstagram size={20} />
+                    </a>
+                    <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+                      <FaLinkedinIn size={20} />
+                    </a>
+                  </div>
+                </div>
+              </footer>
 
         {/* Modal */}
         {selectedProperty && (
