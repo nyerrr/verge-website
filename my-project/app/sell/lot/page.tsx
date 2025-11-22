@@ -73,6 +73,8 @@ export default function Lot() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  
+
   useEffect(() => {
     if (selectedProperty) {
       //prevents from scrolling in the background

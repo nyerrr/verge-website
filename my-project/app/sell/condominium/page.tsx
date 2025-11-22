@@ -16,18 +16,56 @@ const poppins = Poppins({
 
 interface Property {
   id: number
-  image: string
   title: string
-  description: string
   price: string
+  location?: string
+  status: string
   bedrooms: string
   bathrooms: string
   area: string
+  images?: string[]  // Optional array
+  image: string      // Single main image
+  description: string
+  floorLevel?: string
+  parking?: string
+  yearBuilt?: string
+  propertyId?: string
+  features?: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  }
+}
+
+// Type used for modal, ensuring `images` always exists
+interface ModalProperty {
+  id: number
+  title: string
+  price: string
+  location: string
   status: string
+  bedrooms: string
+  bathrooms: string
+  area: string
+  images: string[]
+  description: string
+  floorLevel?: string
+  parking?: string
+  yearBuilt?: string
+  propertyId?: string
+  features?: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  }
 }
 
 export default function Condominium() {
   const [scrollY, setScrollY] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
+  const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -35,17 +73,60 @@ export default function Condominium() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    if (selectedProperty) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "auto"
+    } return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [setSelectedProperty])
+
   const properties: Property[] = [
     {
       id: 1,
       image: "/PMW.jpg",
+      images: [
+        "/1_Bedroom.jpg",
+        "/Grand Hyatt.jpeg",
+        "/1_Bedroom.jpg",
+      ],
       title: "Park Mckinley West",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
       price: "₱3,500,000",
+      location: "Pak, Mckinley West",
       bedrooms: "3",
       bathrooms: "2",
       area: "120 sqm",
-      status: "For Sale"
+      status: "For Sale",
+      floorLevel: "Ground Floor",
+      parking: "2 slots",
+      yearBuilt: "2023",
+      propertyId: "PROP-001",
+      features: {
+        interior: [
+          "Fully furnished",
+          "Modern kitchen",
+          "Built-in wardrobes",
+          "Balcony with garden view",
+          "High-quality flooring",
+        ],
+        amenities: [
+          "Swimming pool",
+          "Fitness gym",
+          "24/7 Security",
+          "Playground",
+          "Function hall",
+          "Parking area",
+        ],
+        nearby: [
+          "SM City Bataan - 5km",
+          "Bataan General Hospital - 3km",
+          "Schools within 2km",
+          "Beach access - 1km",
+        ],
+      },
     },
     {
       id: 2,
@@ -125,6 +206,36 @@ export default function Condominium() {
       status: "For Sale"
     }
   ]
+
+  const handleProtectedAction = (action: string, property: Property) => {
+    if (action === "view") {
+      // Allow action to view details
+      setSelectedProperty({
+        id: property.id,
+      title: property.title,
+      price: property.price,
+      location: property.location || "Unknown Location",
+      status: property.status,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      area: property.area,
+      images: property.images || [property.image],
+      description: property.description,
+      floorLevel: property.floorLevel,
+      parking: property.parking,
+      yearBuilt: property.yearBuilt,
+      propertyId: property.propertyId,
+      features: property.features,
+      })
+    } else if (action === "schedule") {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true)
+      setTimeout(() => setShowLoginPrompt(false), 3000)
+      return
+    }
+     console.log("Schedule tour for:", property.title)
+    }
+  }
 
   return (
     <PageTransition>
@@ -255,10 +366,13 @@ export default function Condominium() {
 
                 {/* Buttons - Enhanced */}
                 <div className="flex gap-2 w-full">
-                  <button className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
+                  <button 
+                  onClick = {() => handleProtectedAction('view', property)}
+                  className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
                     View Details
                   </button>
-                  <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
+                  <button 
+                  className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
                     Contact
                   </button>
                 </div>
@@ -345,6 +459,12 @@ export default function Condominium() {
         </div>
       </footer>
     </div>
+    {selectedProperty && (
+      <PropertyDetailsModal
+        property={selectedProperty}
+        onClose={() => setSelectedProperty(null)}
+      />
+    )}
     </PageTransition>
   )
 }
