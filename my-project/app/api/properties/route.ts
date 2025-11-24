@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (type) where.type = type;
 
     // Fetch properties from the database
-    const properties = await prisma.Property.findMany({
+    const properties = await prisma.property.findMany({
       where,
       orderBy: { createdAt: 'desc' }, // Latest properties first
     });

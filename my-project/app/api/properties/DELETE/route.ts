@@ -22,8 +22,8 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    await prisma.Property.delete({
-      where: { id }
+    await prisma.property.delete({
+      where: { id: Number(id) }
     })
 
     return NextResponse.json({ success: true, message: 'Property deleted successfully' })
