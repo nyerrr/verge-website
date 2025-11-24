@@ -58,15 +58,6 @@ export default function Navigation() {
     }
   }, [open])
 
-  // Show search bar after scrolling 500px
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowSearchInHeader(window.scrollY > 500)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   // Focus trap and Escape key handling for mobile menu
   useEffect(() => {
     if (!open) return
@@ -234,29 +225,46 @@ export default function Navigation() {
             </Link>
           )}
               {/* Search Bar - appears after scrolling */}
-              <div
-                className={`transition-all duration-500 ease-in-out ${
-                  showSearchInHeader
-                    ? 'opacity-100 translate-x-0 w-auto max-w-[150px] sm:max-w-xs lg:max-w-md'
-                    : 'opacity-0 translate-x-10 w-0 overflow-hidden'
-                }`}
-              >
-                <div className="relative hidden sm:block">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full px-3 sm:px-4 py-1.5 sm:py-2 pl-8 sm:pl-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-black text-xs sm:text-sm"
-                  />
-                  <svg
-                    className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
+              {pathname !== '/' && (
+  <form
+    onSubmit={(e) => {
+      e.preventDefault()
+      const query = (e.currentTarget.search.value as string).trim()
+      if (query) {
+        router.push(`/search?query=${encodeURIComponent(query)}`)
+      }
+    }}
+    className="relative shrink-0 w-40 sm:w-56 md:w-64 lg:w-72 xl:w-80"
+  >
+    {/* Input */}
+    <input
+      type="text"
+      name="search"
+      placeholder="Search..."
+      className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-sm md:text-base"
+    />
+
+    {/* Magnifying glass icon */}
+    <button
+      type="submit"
+      className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+    >
+      <svg
+        className="w-4 h-4 sm:w-5 sm:h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+    </button>
+  </form>
+)}
 
               {/* Desktop Auth Buttons - Show/Hide based on login status */}
               {isLoggedIn ? (
