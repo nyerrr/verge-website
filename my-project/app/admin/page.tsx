@@ -171,60 +171,62 @@ export default function AdminPage() {
 
         <main className="container mx-auto px-4 py-8">
           {/* Add Property Button */}
-          <button onClick={() => setShowAddForm(!showAddForm)} className="mb-6 px-6 py-3 bg-black text-white rounded-lg hover:shadow-[0_0_20px_black] transition font-semibold">
+          <button onClick={() => setShowAddForm(!showAddForm)} className="cursor-pointer hover:scale-105 mb-6 px-6 py-3 bg-black text-white rounded-lg hover:shadow-[0_0_20px_black] transition font-semibold">
             {showAddForm ? '✕ Cancel' : '+ Add New Property'}
           </button>
 
           {/* Add Property Form */}
           {showAddForm && (
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div className="text-black bg-white p-6 rounded-lg shadow-md mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Add New Property</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Title */}
-                <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="Title" required className="w-full px-4 py-2 border rounded-lg"/>
+                <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="Title" required className="placeholder:text-gray-400 w-full px-4 py-2 border rounded-lg"/>
                 
                 {/* Property ID */}
-                <input type="text" name="propertyId" value={formData.propertyId} onChange={handleInputChange} placeholder="Property ID" required className="w-full px-4 py-2 border rounded-lg"/>
+                <input type="text" name="propertyId" value={formData.propertyId} onChange={handleInputChange} placeholder="Property ID" required className="placeholder:text-gray-400 w-full px-4 py-2 border rounded-lg"/>
 
                 {/* Price */}
-                <input type="text" name="price" value={formData.price} onChange={handleInputChange} placeholder="Price" required className="w-full px-4 py-2 border rounded-lg"/>
+                <input type="text" name="price" value={formData.price} onChange={handleInputChange} placeholder="Price" required className="placeholder:text-gray-400 w-full px-4 py-2 border rounded-lg"/>
 
                 {/* Location */}
-                <input type="text" name="location" value={formData.location} onChange={handleInputChange} placeholder="Location" required className="w-full px-4 py-2 border rounded-lg"/>
+                <input type="text" name="location" value={formData.location} onChange={handleInputChange} placeholder="Location" required className="placeholder:text-gray-400 w-full px-4 py-2 border rounded-lg"/>
 
                 {/* Category & Type */}
-                <select name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg">
+                <select name="category" value={formData.category} onChange={handleInputChange} className="placeholder:text-gray-400 w-full px-4 py-2 border rounded-lg">
                   <option value="lot">Lot</option>
                   <option value="condominium">Condominium</option>
                   <option value="short-term">Short Term Rent</option>
                   <option value="long-term">Long Term Rent</option>
                 </select>
-                <select name="type" value={formData.type} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg">
+                <select name="type" value={formData.type} onChange={handleInputChange} className="placeholder:text-gray-400w-full px-4 py-2 border rounded-lg">
                   <option value="sell">For Sale</option>
                   <option value="rent">For Rent</option>
                 </select>
 
                 {/* Images Upload */}
                 <div>
-                  <label className="block mb-1 font-medium">Images (You can select multiple)</label>
-                  <input type="file" multiple accept="image/*" onChange={handleImageChange} className="w-full"/>
+                  <label className="text-black block mb-1 font-medium ">Images (You can select multiple)</label>
+                  <input type="file" multiple accept="image/*" onChange={handleImageChange} className="border border-black p-2"/>
                   <div className="flex gap-2 mt-2">
                     {formData.images.map((img, idx) => (
                       <img key={idx} src={img} className="w-20 h-20 object-cover rounded-md" alt={`preview-${idx}`}/>
                     ))}
+                    {formData.images.length === 0 && <span className="text-gray-500">No images selected</span>}
+                    
                   </div>
                 </div>
 
                 {/* Description */}
                 <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Description" required className="w-full px-4 py-2 border rounded-lg"/>
 
-                <button type="submit" className="w-full py-3 bg-black text-white rounded-lg font-semibold">✅ Add Property</button>
+                <button type="submit" className="hover:shadow-[0_0_20px_black] transition duration-300 hover:scale-102 cursor-pointer w-full py-3 bg-black text-white rounded-lg font-semibold">✅ Add Property</button>
               </form>
             </div>
           )}
 
           {/* Properties List */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="text-black bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-6">All Properties ({properties.length})</h2>
             {properties.length === 0 ? <p className="text-center py-8 text-gray-500">No properties yet.</p> : (
               <div className="overflow-x-auto">

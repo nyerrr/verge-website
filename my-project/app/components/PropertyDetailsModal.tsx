@@ -70,7 +70,7 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
     if (e.target === e.currentTarget) {
       onClose()
     }
-  }
+  } 
 
   return (
     <div 
