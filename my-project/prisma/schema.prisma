@@ -12,8 +12,37 @@ model User {
   email     String   @unique
   password  String
   name      String
-  phone     String   // Phone number field
-  userType  String   // "buyer", "seller", "renter", "agent", "admin"
+  phone     String
+  userType  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// prisma/schema.prisma
+
+model Property {
+  // 🎯 CRITICAL FIX: Use SQLite's standard Int ID with autoincrement.
+  // This resolves the P3018 datatype mismatch error.
+  id           Int       @id @default(autoincrement())
+  
+  title        String
+  description  String
+  price        String
+  location     String?
+  category     String?
+  type         String?
+  status       String?
+  bedrooms     String?
+  bathrooms    String?
+  area         String?
+  floorLevel   String?
+  parking      String?
+  yearBuilt    String?
+  propertyId   String?
+  image         String?  // main image
+  images        String? // additional images
+  features     String? // Stores JSON object of features
+  createdBy    String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
