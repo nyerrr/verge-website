@@ -22,6 +22,14 @@ export default function Navigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState('')
   const router = useRouter()
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userDataStr = localStorage.getItem('userData');
+    if (userDataStr) {
+      setUser(JSON.parse(userDataStr));
+    }
+  }, [])
 
   // Check login status
   useEffect (() => {
@@ -217,6 +225,14 @@ export default function Navigation() {
 
             {/* Right Side */}
             <div className="flex text-black items-center gap-2 sm:gap-3">
+              {user?.userType === "admin" && (
+            <Link
+              href="/admin"
+              className="px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+            >
+              Admin Dashboard
+            </Link>
+          )}
               {/* Search Bar - appears after scrolling */}
               <div
                 className={`transition-all duration-500 ease-in-out ${
@@ -243,32 +259,32 @@ export default function Navigation() {
               </div>
 
               {/* Desktop Auth Buttons - Show/Hide based on login status */}
-  {isLoggedIn ? (
-    <div className="hidden lg:flex items-center gap-3">
-      <span className="text-sm text-gray-700">Hi, {userName}</span>
-      <button
-        onClick={handleLogout}
-        className=" cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
-      >
-        Logout
-      </button>
-    </div>
-  ) : (
-    <>
-      <Link
-        href="/login"
-        className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-      >
-        Log in
-      </Link>
-      <Link
-        href="/signup"
-        className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-200 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-      >
-        Sign-up
-      </Link>
-    </>
-  )}
+              {isLoggedIn ? (
+              <div className="hidden lg:flex items-center gap-3">
+                <span className="text-sm text-gray-700">Hi, {userName}</span>
+                <button
+                onClick={handleLogout}
+                className=" cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
+                >
+                  Logout
+                </button>
+              </div>
+              ) : (
+              <>
+              <Link
+              href="/login"
+              className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+              >
+                Log in
+              </Link>
+              <Link
+              href="/signup"
+              className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-200 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+              >
+              Sign-up
+              </Link>
+              </>
+            )}
 
               {/* Mobile Menu Button */}
               <button

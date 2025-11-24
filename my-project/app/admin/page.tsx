@@ -167,15 +167,7 @@ export default function AdminPage() {
     <PageTransition>
       <div className="min-h-screen bg-gray-100">
         {/* Header */}
-        <header className="bg-white shadow-md">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-black">Admin Dashboard</h1>
-              <p className="text-sm text-gray-600">Welcome, {userData?.name}</p>
-            </div>
-            <button onClick={handleLogout} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Logout</button>
-          </div>
-        </header>
+        
 
         <main className="container mx-auto px-4 py-8">
           {/* Add Property Button */}
