@@ -74,7 +74,7 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-9999 bg-black/80 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
       <div className="h-screen w-screen overflow-y-auto">
@@ -83,7 +83,7 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-[100] w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
+              className="absolute top-4 right-4 z-100 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
             >
               <FaTimes className="text-gray-800 text-xl" />
             </button>
@@ -117,13 +117,13 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
                   <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 pointer-events-none">
                     <button
                       onClick={prevImage}
-                      className="pointer-events-auto w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 z-[20]"
+                      className="pointer-events-auto w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 z-20"
                     >
                       <FaChevronLeft className="text-gray-800" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="pointer-events-auto w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 z-[20]"
+                      className="pointer-events-auto w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 "
                     >
                       <FaChevronRight className="text-gray-800" />
                     </button>
@@ -133,12 +133,12 @@ export default function PropertyDetailsModal({ property, onClose }: PropertyDeta
                 {/* Bottom Controls */}
                 <div className="absolute bottom-4 left-0 right-0 flex items-center justify-between px-4">
                   {/* Image Counter */}
-                  <div className="pointer-events-auto bg-black/70 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm z-[20]">
+                  <div className="pointer-events-auto bg-black/70 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm z-20">
                     {currentImageIndex + 1} / {validImages.length}
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 pointer-events-auto z-[20]">
+                  <div className="flex gap-2 pointer-events-auto z-20">
                     <button
                       onClick={() => setIsFavorite(!isFavorite)}
                       className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all ${
