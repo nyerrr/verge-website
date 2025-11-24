@@ -216,14 +216,6 @@ export default function Navigation() {
 
             {/* Right Side */}
             <div className="flex text-black items-center gap-2 sm:gap-3">
-              {user?.userType === "admin" && (
-            <Link
-              href="/admin"
-              className="px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-            >
-              Admin Dashboard
-            </Link>
-          )}
               {/* Search Bar - appears after scrolling */}
               {pathname !== '/' && (
   <form

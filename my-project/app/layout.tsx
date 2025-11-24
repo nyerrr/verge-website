@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Poppins } from 'next/font/google'
+import { Poppins } from "next/font/google";
 import { Changa_One } from "next/font/google";
 import "./globals.css";
-import Navigation from './components/Navigation';
+import Navigation from "./components/Navigation";
+import AdminFloatingButton from "./components/AdminFloatingButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,7 @@ const geistSans = Geist({
 const changaOne = Changa_One({
   subsets: ["latin"],
   weight: ["400"],
-  display: 'swap',
+  display: "swap",
   variable: "--font-changa-one",
 });
 
@@ -23,11 +24,11 @@ const geistMono = Geist_Mono({
 });
 
 const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400','600','700'],
-  display: 'swap',
-  variable: '--font-poppins'
-})
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -36,16 +37,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${poppins.className} ${geistSans.variable} ${geistMono.variable} ${changaOne.variable} antialiased`}
       >
+        {/* Top Navigation */}
         <Navigation />
+
+        {/* Main content */}
         <main>{children}</main>
+
+        {/* Floating Admin Button */}
+        <AdminFloatingButton />
       </body>
     </html>
   );
