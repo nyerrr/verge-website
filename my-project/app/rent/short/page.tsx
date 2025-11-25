@@ -3,29 +3,60 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Poppins } from "next/font/google"
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBed, FaBath, FaRulerCombined, FaTshirt, FaSnowflake, FaCar, FaLock } from 'react-icons/fa'
 import PageTransition from '../../components/PageTransition'
+import PropertyDetailsModal from '../../components/PropertyDetailsModal'
+import Link from 'next/link'
 
+// ============================================
+// FONT CONFIGURATION
+// ============================================
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-poppins",
 })
 
-interface Rental {
+// ============================================
+// TYPES & INTERFACES
+// ============================================
+interface Property {
   id: number
-  image: string
   title: string
-  location: string
-  nightly: string
-  beds: string
-  baths: string
+  price: string
+  location?: string
+  status: string
+  bedrooms: string
+  bathrooms: string
   area: string
-  amenities: string[]
+  images?: string[]
+  image: string
   description: string
+  floorLevel?: string
+  parking?: string
+  yearBuilt?: string
+  propertyId?: string
+  features?: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  }
 }
 
-// SVG Icons as components
+// Type used for modal, ensuring `images` always exists
+interface ModalProperty extends Property {
+  location: string
+  images: string[]
+}
+
+interface AmenityItem {
+  icon: React.ReactNode
+  label: string
+}
+
+// ============================================
+// SVG ICON COMPONENTS
+// ============================================
 const BedIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 640 512">
     <path d="M176 256c44.11 0 80-35.89 80-80s-35.89-80-80-80-80 35.89-80 80 35.89 80 80 80zm352-128H304c-8.84 0-16 7.16-16 16v144H64V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v352c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16v-48h512v48c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16V240c0-61.86-50.14-112-112-112z"/>
@@ -56,23 +87,38 @@ const UtensilsIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 )
 
-const SocialIcon = ({ type, className = "w-5 h-5" }: { type: string; className?: string }) => {
-  const paths: Record<string, string> = {
-    facebook: "M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z",
-    twitter: "M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z",
-    instagram: "M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z",
-    linkedin: "M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"
-  }
+// MAIN COMPONENT
+export default function ShortTermRental() {
   
-  return (
-    <svg className={className} fill="currentColor" viewBox="0 0 512 512">
-      <path d={paths[type]} />
-    </svg>
-  )
-}
-
-export default function Short() {
+  // STATE MANAGEMENT
   const [scrollY, setScrollY] = useState(0)
+  const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
+  const [Properties, setPropertiesData] = useState<Property[]>([])
+  const [isLoadingProperties, setIsLoadingProperties] = useState(true)
+
+  // DATA FETCHING
+  const fetchProperties = async () => {
+    try {
+      const response = await fetch('/api/properties?category=short-term&type=rent')
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      setPropertiesData(data)
+    } catch (error) {
+      console.error('Failed to fetch properties:', error)
+      setPropertiesData([])
+    } finally {
+      setIsLoadingProperties(false)
+    }
+  }
+
+  // EFFECTS
+  useEffect(() => {
+    fetchProperties()
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -80,304 +126,327 @@ export default function Short() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const rentals: Rental[] = [
-    {
-      id: 1,
-      image: "/2.jpg",
-      title: "2 Bedroom for Lease in BGC",
-      location: "BGC",
-      nightly: "₱1,800",
-      beds: "2",
-      baths: "1",
-      area: "28 sqm",
-      amenities: ["Wi-Fi", "Aircon", "Kitchenette", "Smart TV"],
-      description: "Cozy studio ideally located near Ayala, perfect for short business trips or weekend getaways.",
-    },
-    {
-      id: 2,
-      image: "/Valley_Golf.jpg",
-      title: "House and Lot in Valley Golf for Lease",
-      location: "Valley Golf",
-      nightly: "₱2,400",
-      beds: "3",
-      baths: "2",
-      area: "42 sqm",
-      amenities: ["Wi-Fi", "Pool Access", "Gym", "Kitchen"],
-      description: "Bright one-bedroom condo with river views and building amenities. Ideal for work-and-stay.",
-    },
-    {
-      id: 3,
-      image: "/1_Bedroom.jpg",
-      title: "1 Bedroom for Lease near Makati",
-      location: "Quezon City",
-      nightly: "₱3,200",
-      beds: "1",
-      baths: "1",
-      area: "65 sqm",
-      amenities: ["Wi-Fi", "Kitchen", "Free Parking", "Work Desk"],
-      description: "Spacious two-bedroom unit with full kitchen and work corner — family-friendly location.",
-    },
-  ]
+  useEffect(() => {
+    document.body.style.overflow = selectedProperty ? "hidden" : "auto"
+    return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [selectedProperty])
 
-  const amenities = [
+  // HANDLERS
+  const handleViewDetails = (property: Property) => {
+    let imagesArray: string[] = []
+
+    try {
+      if (Array.isArray(property.images)) {
+        imagesArray = property.images
+      } else if (typeof property.images === "string") {
+        imagesArray = JSON.parse(property.images)
+      }
+    } catch (err) {
+      console.warn("Failed to parse images:", err)
+      imagesArray = [property.image || "/property-placeholder.jpg"]
+    }
+
+    imagesArray = imagesArray.map((img) =>
+      img.startsWith("/") || img.startsWith("http") ? img : `/${img}`
+    )
+
+    setSelectedProperty({
+      id: property.id,
+      title: property.title,
+      price: property.price,
+      location: property.location || "Unknown Location",
+      status: property.status,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      area: property.area,
+      images: imagesArray.length ? imagesArray : [property.image || "/property-placeholder.jpg"],
+      description: property.description,
+      floorLevel: property.floorLevel,
+      parking: property.parking,
+      yearBuilt: property.yearBuilt,
+      propertyId: property.propertyId,
+      features: property.features,
+    } as ModalProperty)
+  }
+
+  // STATIC DATA
+  const amenities: AmenityItem[] = [
     { icon: <WifiIcon />, label: "Free Wi-Fi" },
     { icon: <UtensilsIcon />, label: "Kitchenette" },
     { icon: <BedIcon />, label: "Fully Furnished" },
     { icon: <BathIcon />, label: "Clean Linens" },
+    { icon: <FaTshirt />, label: "Laundry Access" },
+    { icon: <FaSnowflake />, label: "Air Conditioning" },
+    { icon: <FaCar />, label: "Parking Available" },
+    { icon: <FaLock />, label: "Secure Entry" },
   ]
 
-  const socialLinks = [
-    { type: "facebook", href: "#" },
-    { type: "twitter", href: "#" },
-    { type: "instagram", href: "#" },
-    { type: "linkedin", href: "#" },
+  const pricingOptions = [
+    { period: "Nightly", price: "From ₱1,200 / night", desc: "Perfect for short getaways" },
+    { period: "Weekly", price: "From ₱7,000 / week", desc: "Better value for week-long stays" },
+    { period: "Monthly", price: "From ₱18,000 / month", desc: "Best savings for extended visits" },
   ]
 
+  // RENDER
   return (
     <PageTransition>
-    <div className="bg-white min-h-screen">
-      {/* Hero Section */}
-      <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
-        <div className="absolute inset-0">
-          <Image src="/buildings2.jpg" alt="buildings hero" fill className="object-cover" priority />
-        </div>
-        <div className="absolute inset-0 bg-black/60 z-10" />
-        <div className="absolute inset-0 flex flex-col justify-center z-20 text-white px-4 sm:px-8 md:px-16 lg:px-24">
-          <span className="inline-block w-fit text-xs md:text-sm font-semibold uppercase tracking-wider text-gray-200 bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20 mb-4">
-            Short-Term Rental • Daily • Weekly • Monthly
-          </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-            Flexible Short-Term Rentals
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-3xl text-gray-200 leading-relaxed">
-            Comfortable, fully-furnished units ready for short stays. Book by night, week, or month.
-          </p>
-        </div>
-      </section>
+      <div className="bg-white min-h-screen">
+        {/* Hero Section */}
+        <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
+          <div className="absolute inset-0">
+            <Image src="/buildings2.jpg" alt="buildings hero" fill className="object-cover" priority />
+          </div>
+          <div className="absolute inset-0 bg-black/60 z-10" />
+          <div className="absolute inset-0 flex flex-col justify-center z-20 text-white px-4 sm:px-8 md:px-16 lg:px-24">
+            <span className="inline-block w-fit text-xs md:text-sm font-semibold uppercase tracking-wider text-gray-200 bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20 mb-4">
+              Short-Term Rental • Daily • Weekly • Monthly
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+              Flexible Short-Term Rentals
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-3xl text-gray-200 leading-relaxed text-justify">
+              Comfortable, fully-furnished units ready for short stays. Whether you need a place for a night, a week, or a month, we have flexible options designed for travelers, business professionals, and anyone seeking temporary accommodations with all the comforts of home.
+            </p>
+          </div>
+        </section>
 
-      {/* Featured Rentals */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-16 lg:px-24 bg-linear-to-b from-gray-50 to-white">
-        <div className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
-          <span className="inline-block text-xs md:text-sm font-semibold uppercase tracking-widest text-gray-700 bg-gray-100 px-4 py-2 rounded-full mb-4">
-            Short-Term Picks
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Available Rentals</h2>
-          <p className="text-gray-600 text-base md:text-lg">
-            Choose from nightly, weekly, or monthly rates. <span className="font-semibold">{rentals.length}</span> comfortable options.
-          </p>
-          <div className="mt-6 w-24 h-1 bg-linear-to-r from-gray-700 to-gray-900 mx-auto rounded-full" />
-        </div>
+        {/* Featured Rentals */}
+        <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-16 lg:px-24 bg-linear-to-b from-gray-50 to-white">
+          <div className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
+            <span className="inline-block text-xs md:text-sm font-semibold uppercase tracking-widest text-gray-700 bg-gray-100 px-4 py-2 rounded-full mb-4">
+              Short-Term Picks
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Available Rentals</h2>
+            <p className="text-gray-600 text-base md:text-lg">
+              Choose from nightly, weekly, or monthly rates. <span className="font-semibold">{Properties.length}</span> comfortable options ready for booking.
+            </p>
+            <div className="mt-6 w-24 h-1 bg-linear-to-r from-gray-700 to-gray-900 mx-auto rounded-full" />
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-          {rentals.map((rental) => (
-            <article
-              key={rental.id}
-              className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-            >
-              <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
-                <Image
-                  src={rental.image}
-                  alt={rental.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute top-3 left-3 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold">
-                  Available Now
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/85 to-transparent p-4">
-                  <p className="text-white text-2xl sm:text-3xl font-bold">
-                    {rental.nightly} <span className="text-sm font-normal">/ night</span>
-                  </p>
-                </div>
-              </div>
+          {/* Properties Grid with Loading States */}
+          {isLoadingProperties ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+              <p className="text-gray-600 mt-4">Loading properties...</p>
+            </div>
+          ) : Properties.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-2xl shadow-md p-8">
+              <p className="text-gray-600 text-lg">No short-term rental properties available yet.</p>
+              <p className="text-sm text-gray-400 mt-2">Check back soon for new listings.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+              {Properties.map((property) => {
+                let imagesArray: string[] = []
+                if (property.images) {
+                  imagesArray = Array.isArray(property.images)
+                    ? property.images
+                    : JSON.parse(property.images)
+                }
+                const mainImage = imagesArray[0] || "/property-placeholder.jpg"
 
-              <div className="p-4 sm:p-5 md:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{rental.title}</h3>
-                <p className="text-xs sm:text-sm text-gray-500 mb-4">{rental.location}</p>
-
-                <div className="grid grid-cols-3 gap-3 mb-4 pb-4 border-b border-gray-100">
-                  {[
-                    { icon: <BedIcon className="w-5 h-5" />, label: "Beds", value: rental.beds },
-                    { icon: <BathIcon className="w-5 h-5" />, label: "Baths", value: rental.baths },
-                    { icon: <RulerIcon className="w-5 h-5" />, label: "Area", value: rental.area },
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex flex-col items-center gap-2">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-700">
-                        {item.icon}
+                return (
+                  <article
+                    key={property.id}
+                    className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                  >
+                    <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                      <Image
+                        src={mainImage}
+                        alt={property.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute top-3 left-3 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold">
+                        {property.status}
                       </div>
-                      <div className="text-center">
-                        <p className="text-xs text-gray-500">{item.label}</p>
-                        <p className="text-sm font-bold text-gray-900">{item.value}</p>
+                      <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/85 to-transparent p-4">
+                        <p className="text-white text-2xl sm:text-3xl font-bold">
+                          {property.price}
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{rental.description}</p>
+                    <div className="p-4 sm:p-5 md:p-6">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{property.title}</h3>
+                      <p className="text-xs sm:text-sm text-gray-500 mb-4">{property.location}</p>
 
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {rental.amenities.slice(0, 3).map((amenity, i) => (
-                    <span key={i} className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
-                      {amenity}
-                    </span>
-                  ))}
-                </div>
+                      <div className="grid grid-cols-3 gap-3 mb-4 pb-4 border-b border-gray-100">
+                        {[
+                          { icon: <BedIcon className="w-5 h-5" />, label: "Beds", value: property.bedrooms },
+                          { icon: <BathIcon className="w-5 h-5" />, label: "Baths", value: property.bathrooms },
+                          { icon: <RulerIcon className="w-5 h-5" />, label: "Area", value: property.area },
+                        ].map((item, idx) => (
+                          <div key={idx} className="flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-700">
+                              {item.icon}
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xs text-gray-500">{item.label}</p>
+                              <p className="text-sm font-bold text-gray-900">{item.value}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
 
-                <div className="flex gap-2">
-                  <button className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 hover:scale-105 text-sm">
-                    Book Stay
-                  </button>
-                  <button className="cursor-pointer hover:scale-105 bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition text-sm">
-                    Details
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{property.description}</p>
 
-      {/* Pricing Options */}
-      <section
-  className="relative bg-[url('/buildings2.jpg')] bg-cover bg-center bg-fixed 
-             py-16 sm:py-20 md:py-24 flex items-center justify-center"
->
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-black/50" />
-
-  {/* Content */}
-  <div className="relative z-10 text-center px-4 max-w-4xl mx-auto text-white">
-    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-      Pricing Options
-    </h3>
-
-    <p className="text-sm sm:text-base md:text-lg mb-10">
-      Transparent rates for stays by night, week or month.
-    </p>
-
-    {/* Responsive Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-      {[
-        { period: "Nightly", price: "From ₱1,200 / night", desc: "Best for short stays" },
-        { period: "Weekly", price: "From ₱7,000 / week", desc: "Flexible weekly rates" },
-        { period: "Monthly", price: "From ₱18,000 / month", desc: "Save more monthly" },
-      ].map((option, i) => (
-        <div
-          key={i}
-          className="bg-white/10 backdrop-blur-sm p-5 sm:p-6 rounded-xl border border-white/20 
-                     hover:bg-white/20 transition"
-        >
-          <p className="text-xs sm:text-sm uppercase text-gray-200 mb-2">
-            {option.period}
-          </p>
-
-          <p className="text-lg sm:text-xl font-bold mb-2">{option.price}</p>
-
-          <p className="text-xs sm:text-sm text-gray-300">{option.desc}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
-
-
-      {/* Amenities */}
-      <section className="bg-white py-12 sm:py-16 px-4 sm:px-8 md:px-16 lg:px-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Inclusions & Amenities</h3>
-          <p className="text-gray-600 mb-8 text-sm sm:text-base">
-            Our short-term units come with utilities and conveniences.
-          </p>
-          <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700">
-            {amenities.map((amenity, i) => (
-              <li key={i} className="flex flex-col items-center gap-2">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                  {amenity.icon}
-                </div>
-                <span className="text-sm font-medium">{amenity.label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-12 sm:py-16 text-center px-4">
-        <h2 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Book?</h2>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
-          <button className="transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 hover:scale-105 cursor-pointer w-full sm:w-auto bg-black text-white px-8 py-4 rounded-xl font-semibold">
-            Book Now
-          </button>
-          <button className="cursor-pointer hover:scale-105 w-full sm:w-auto bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold border-2 border-gray-200 hover:bg-gray-50 transition">
-            Check Availability
-          </button>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="bg-linear-to-br from-gray-100 to-white px-4 sm:px-8 md:px-16 py-12 sm:py-16">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-8">
-            <div className="flex-1 text-center lg:text-left">
-              <span className="inline-block text-xs font-semibold uppercase tracking-widest text-gray-700 bg-white px-4 py-2 rounded-full mb-4">
-                Stay Updated
-              </span>
-              <h2 className={`${poppins.className} text-black font-bold text-3xl sm:text-4xl md:text-5xl mb-4`}>
-                Subscribe To Our Newsletter
-              </h2>
-              <p className="text-gray-600 text-sm sm:text-base mb-6">
-                Get exclusive updates on new properties and special offers
-              </p>
-              <div className="space-y-3">
-                <input
-                  type="email"
-                  placeholder="Enter Your Email"
-                  className="placeholder:text-black w-full max-w-md rounded-2xl border-2 border-gray-300 py-3 px-5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
-                />
-                <button className="cursor-pointer transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 w-full sm:w-auto bg-black text-white px-8 py-3 rounded-2xl font-bold  hover:scale-105">
-                  Subscribe Now
-                </button>
-              </div>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleViewDetails(property)}
+                          className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 hover:scale-105 text-sm"
+                        >
+                          View Details
+                        </button>
+                        <Link href="/contact">
+                          <button className="cursor-pointer hover:scale-105 bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition text-sm">
+                            Contact
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                )
+              })}
             </div>
-            <div className="flex-1 flex justify-center">
-              <Image
-                src="/email.png"
-                alt="Newsletter"
-                width={400}
-                height={400}
-                className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-2xl object-cover shadow-xl"
-              />
+          )}
+        </section>
+
+        {/* Pricing Options */}
+        <section className="relative bg-[url('/buildings2.jpg')] bg-cover bg-center bg-fixed py-16 sm:py-20 md:py-24 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto text-white">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+              Pricing Options
+            </h3>
+            <p className="text-sm sm:text-base md:text-lg mb-10">
+              Transparent rates for stays by night, week, or month.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+              {pricingOptions.map((option, i) => (
+                <div
+                  key={i}
+                  className="bg-white/10 backdrop-blur-sm p-5 sm:p-6 rounded-xl border border-white/20 hover:bg-white/20 transition"
+                >
+                  <p className="text-xs sm:text-sm uppercase text-gray-200 mb-2">{option.period}</p>
+                  <p className="text-lg sm:text-xl font-bold mb-2">{option.price}</p>
+                  <p className="text-xs sm:text-sm text-gray-300">{option.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer - Enhanced */}
+        {/* Amenities */}
+        <section className="bg-white py-12 sm:py-16 px-4 sm:px-8 md:px-16 lg:px-24">
+          <div className="max-w-4xl mx-auto text-center">
+            <h3 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Inclusions & Amenities</h3>
+            <p className="text-gray-600 mb-8 text-sm sm:text-base">
+              Our short-term units come with utilities and conveniences for your comfort.
+            </p>
+            <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700">
+              {amenities.map((amenity, i) => (
+                <li key={i} className="flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                    {amenity.icon}
+                  </div>
+                  <span className="text-sm font-medium">{amenity.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-12 sm:py-16 text-center px-4">
+          <h2 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Book?</h2>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
+            <Link href="/contact" className="w-full sm:w-auto">
+              <button className="transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 hover:scale-105 cursor-pointer w-full sm:w-auto bg-black text-white px-8 py-4 rounded-xl font-semibold">
+                Book Your Stay
+              </button>
+            </Link>
+            <Link href="/contact" className="w-full sm:w-auto">
+              <button className="cursor-pointer hover:scale-105 w-full sm:w-auto bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold border-2 border-gray-200 hover:bg-gray-50 transition">
+                Check Availability
+              </button>
+            </Link>
+          </div>
+        </section>
+
+        {/* Newsletter */}
+        <section className="bg-linear-to-br from-gray-100 to-white px-4 sm:px-8 md:px-16 py-12 sm:py-16">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col lg:flex-row items-center gap-8">
+              <div className="flex-1 text-center lg:text-left">
+                <span className="inline-block text-xs font-semibold uppercase tracking-widest text-gray-700 bg-white px-4 py-2 rounded-full mb-4">
+                  Stay Updated
+                </span>
+                <h2 className={`${poppins.className} text-black font-bold text-3xl sm:text-4xl md:text-5xl mb-4`}>
+                  Subscribe To Our Newsletter
+                </h2>
+                <p className="text-gray-600 text-sm sm:text-base mb-6">
+                  Get exclusive updates on new properties and special offers
+                </p>
+                <div className="space-y-3">
+                  <input
+                    type="email"
+                    placeholder="Enter Your Email"
+                    className="placeholder:text-gray-500 w-full max-w-md rounded-2xl border-2 border-gray-300 py-3 px-5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
+                  />
+                  <button className="cursor-pointer transition duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 w-full sm:w-auto bg-black text-white px-8 py-3 rounded-2xl font-bold hover:scale-105">
+                    Subscribe Now
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 flex justify-center">
+                <Image
+                  src="/email.png"
+                  alt="Newsletter"
+                  width={400}
+                  height={400}
+                  className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-2xl object-cover shadow-xl"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
         <footer className="py-12 sm:py-14 md:py-16 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-            <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent"></div>
-              
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent"></div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <p className="text-sm sm:text-base md:text-lg mb-6 text-gray-300">
-                © 2024 Copyright: <span className="font-bold text-white">Verg Realty</span> - All Rights Reserved
+              © 2024 Copyright: <span className="font-bold text-white">Verg Realty</span> - All Rights Reserved
             </p>
             <hr className="border-t border-gray-600 w-3/4 sm:w-1/2 mx-auto mb-6" />
             <div className="flex justify-center items-center gap-5 sm:gap-7 md:gap-9">
-                <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
                 <FaFacebookF size={20} />
-                </a>
-                <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              </a>
+              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
                 <FaTwitter size={20} />
-                </a>
-                <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              </a>
+              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
                 <FaInstagram size={20} />
-                </a>
-                <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
+              </a>
+              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-110 border border-white/20">
                 <FaLinkedinIn size={20} />
-                </a>
+              </a>
             </div>
-            </div>
+          </div>
         </footer>
-    </div>
+
+        {/* Property Details Modal */}
+        {selectedProperty && (
+          <PropertyDetailsModal
+            property={selectedProperty}
+            onClose={() => setSelectedProperty(null)}
+          />
+        )}
+      </div>
     </PageTransition>
   )
 }

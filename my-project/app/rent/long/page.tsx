@@ -43,10 +43,12 @@ interface Property {
   }
 }
 
+// Type used for modal, ensuring `images` always exists
 interface ModalProperty extends Property {
   location: string
   images: string[]
 }
+
 
 interface AmenityItem {
   icon: React.ReactNode
@@ -86,21 +88,20 @@ const UtensilsIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 )
 
-// ============================================
+
 // MAIN COMPONENT
-// ============================================
+
 export default function LongTermRental() {
-  // ============================================
+  
   // STATE MANAGEMENT
-  // ============================================
+ 
   const [scrollY, setScrollY] = useState(0)
   const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
   const [Properties, setPropertiesData] = useState<Property[]>([])
   const [isLoadingProperties, setIsLoadingProperties] = useState(true)
 
-  // ============================================
   // DATA FETCHING
-  // ============================================
+ 
   const fetchProperties = async () => {
     try {
       const response = await fetch('/api/properties?category=long-term&type=rent')
@@ -119,9 +120,8 @@ export default function LongTermRental() {
     }
   }
 
-  // ============================================
-  // EFFECTS
-  // ============================================
+ // EFFECTS
+  
   useEffect(() => {
     fetchProperties()
   }, [])
@@ -139,9 +139,9 @@ export default function LongTermRental() {
     }
   }, [selectedProperty])
 
-  // ============================================
+ 
   // HANDLERS
-  // ============================================
+ 
   const handleViewDetails = (property: Property) => {
     let imagesArray: string[] = []
 
@@ -179,9 +179,9 @@ export default function LongTermRental() {
     } as ModalProperty)
   }
 
-  // ============================================
+  
   // STATIC DATA
-  // ============================================
+  
   const amenities: AmenityItem[] = [
     { icon: <WifiIcon />, label: "High-Speed Internet" },
     { icon: <UtensilsIcon />, label: "Full Kitchen" },
@@ -199,9 +199,8 @@ export default function LongTermRental() {
     { period: "Yearly", price: "From ₱180,000 / year", desc: "Maximize savings for a worry-free long-term stay" },
   ]
 
-  // ============================================
   // RENDER
-  // ============================================
+
   return (
     <PageTransition>
       <div className="bg-white min-h-screen">
