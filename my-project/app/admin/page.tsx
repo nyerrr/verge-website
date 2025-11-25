@@ -70,13 +70,16 @@ const INITIAL_FORM_STATE: PropertyFormData = {
 const CATEGORY_OPTIONS = [
   { value: 'lot', label: 'House and Lot' },
   { value: 'condominium', label: 'Condominium' },
-  { value: 'short-term', label: 'Short Term Rent' },
-  { value: 'long-term', label: 'Long Term Rent' }
+  { value: 'short-term', label: 'Short Term' },
+  { value: 'long-term', label: 'Long Term' },
+  { value: 'Pre-selling', label: 'Pre-selling' },
+  { value: 'Ready for Occupancy', label: 'Ready for Occupancy' }
 ]
 
 const TYPE_OPTIONS = [
-  { value: 'sell', label: 'For Sale' },
-  { value: 'rent', label: 'For Rent' }
+  { value: 'sell', label: 'Sell' },
+  { value: 'rent', label: 'Rent' },
+  { value: 'buy', label: 'Buy' }
 ]
 
 // ============================================
