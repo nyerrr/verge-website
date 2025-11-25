@@ -39,26 +39,9 @@ interface Property {
 }
 
 // Type used for modal, ensuring `images` always exists
-interface ModalProperty {
-  id: number
-  title: string
-  price: string
+interface ModalProperty extends Property {
   location: string
-  status: string
-  bedrooms: string
-  bathrooms: string
-  area: string
   images: string[]
-  description: string
-  floorLevel?: string
-  parking?: string
-  yearBuilt?: string
-  propertyId?: string
-  features?: {
-    interior?: string[]
-    amenities?: string[]
-    nearby?: string[]
-  }
 }
 
 export default function Condominium() {
@@ -66,7 +49,31 @@ export default function Condominium() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
   const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
+  const [Properties, setPropertiesData] = useState<Property[]>([])
+  const [isLoadingProperties, setIsLoadingProperties] = useState(true)
   const router = useRouter()
+
+  const fetchProperties = async () => {
+    try {
+      const response = await fetch('/api/properties?category=condominium&type=sell');
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setPropertiesData(data);
+    } catch (error) {
+      console.error('Failed to fetch properties:', error);
+      setPropertiesData([]);
+    } finally {
+      setIsLoadingProperties(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -75,397 +82,58 @@ export default function Condominium() {
   }, [])
 
   useEffect(() => {
-    if (selectedProperty) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "auto"
-    } return () => {
+    document.body.style.overflow = selectedProperty ? "hidden" : "auto"
+    return () => {
       document.body.style.overflow = "auto"
     }
-  }, [setSelectedProperty])
+  }, [selectedProperty])
 
-  const properties: Property[] = [
-    {
-      id: 1,
-      image: "/PMW.jpg",
-      title: "Park Mckinley West",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱3,500,000",
-      bedrooms: "3",
-      bathrooms: "2",
-      area: "120 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 2,
-      image: "/Axis-Residences-Mandaluyong.jpg.webp",
-      title: "One Rockwell",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱5,800,000",
-      bedrooms: "4",
-      bathrooms: "3",
-      area: "180 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 3,
-      image: "/Harbour_Park_Residences.jpeg",
-      title: "Harbour Park Residences",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱2,200,000",
-      bedrooms: "2",
-      bathrooms: "2",
-      area: "80 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 4,
-      image: "/avida_astern.jpeg",
-      title: "Avida astern",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱4,500,000",
-      bedrooms: "3",
-      bathrooms: "2",
-      area: "150 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 5,
-      image: "/Joya.jpg",
-      title: "Joya Lofts and Towers",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱6,300,000",
-      bedrooms: "4",
-      bathrooms: "3",
-      area: "200 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 6,
-      image: "/Light_Residences.jpg",
-      title: "Light Reisdences",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱8,500,000",
-      bedrooms: "5",
-      bathrooms: "4",
-      area: "250 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 7,
-      image: "/Trion Towers.jpg",
-      title: "Trion Towers",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱4,800,000",
-      bedrooms: "3",
-      bathrooms: "3",
-      area: "160 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    },
-    {
-      id: 8,
-      image: "/Shangrila_BGC.jpg",
-      title: "Shangrila BGC",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vel dignissimos, asperiores necessitatibus velit corporis, eligendi voluptatem, quos consectetur odit quam iste.",
-      price: "₱4,800,000",
-      bedrooms: "3",
-      bathrooms: "3",
-      area: "160 sqm",
-      status: "For Sale",
-      location: "Pak, Mckinley West",
-      images: [
-        "/1_Bedroom.jpg",
-        "/Grand Hyatt.jpeg",
-        "/1_Bedroom.jpg",
-      ],
-      floorLevel: "Ground Floor",
-      parking: "2 slots",
-      yearBuilt: "2023",
-      propertyId: "PROP-001",
-      features: {
-        interior: [
-          "Fully furnished",
-          "Modern kitchen",
-          "Built-in wardrobes",
-          "Balcony with garden view",
-          "High-quality flooring",
-        ],
-        amenities: [
-          "Swimming pool",
-          "Fitness gym",
-          "24/7 Security",
-          "Playground",
-          "Function hall",
-          "Parking area",
-        ],
-        nearby: [
-          "SM City Bataan - 5km",
-          "Bataan General Hospital - 3km",
-          "Schools within 2km",
-          "Beach access - 1km",
-        ],
-      },
-    }
-  ]
-
+  
   const handleProtectedAction = (action: string, property: Property) => {
     if (action === "view") {
-      // Allow action to view details
+      // Ensure images array exists
+      let imagesArray: string[] = [];
+
+      try {
+        if (Array.isArray(property.images)) {
+          imagesArray = property.images;
+        } else if (typeof property.images === "string") {
+          imagesArray = JSON.parse(property.images);
+        }
+      } catch (err) {
+        console.warn("Failed to parse images:", err);
+        imagesArray = [property.image || "/property-placeholder.jpg"];
+      }
+
+      // Make sure all relative paths start with "/"
+      imagesArray = imagesArray.map((img) =>
+        img.startsWith("/") || img.startsWith("http") ? img : `/${img}`
+      );
+
       setSelectedProperty({
-      id: property.id,
-      title: property.title,
-      price: property.price,
-      location: property.location || "Unknown Location",
-      status: property.status,
-      bedrooms: property.bedrooms,
-      bathrooms: property.bathrooms,
-      area: property.area,
-      images: property.images || [property.image],
-      description: property.description,
-      floorLevel: property.floorLevel,
-      parking: property.parking,
-      yearBuilt: property.yearBuilt,
-      propertyId: property.propertyId,
-      features: property.features,
-      })
+        id: property.id,
+        title: property.title,
+        price: property.price,
+        location: property.location || "Unknown Location",
+        status: property.status,
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        area: property.area,
+        images: imagesArray.length ? imagesArray : [property.image || "/property-placeholder.jpg"],
+        description: property.description,
+        floorLevel: property.floorLevel,
+        parking: property.parking,
+        yearBuilt: property.yearBuilt,
+        propertyId: property.propertyId,
+        features: property.features,
+      } as ModalProperty);
     } else if (action === "schedule") {
-    if (!isLoggedIn) {
-      setShowLoginPrompt(true)
-      setTimeout(() => setShowLoginPrompt(false), 3000)
-      return
-    }
-     console.log("Schedule tour for:", property.title)
+      if (!isLoggedIn) {
+        setShowLoginPrompt(true)
+        setTimeout(() => setShowLoginPrompt(false), 3000)
+        return
+      }
+      console.log("Schedule tour for:", property.title)
     }
   }
 
@@ -474,9 +142,7 @@ export default function Condominium() {
     <div className="bg-white min-h-screen">
       {/* Hero Section - Enhanced with Modern Typography */}
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] xl:h-[600px] overflow-hidden">
-        <div
-          className="absolute inset-0"
-        >
+        <div className="absolute inset-0">
           <Image
             src="/buildings2.jpg"
             alt="buildings"
@@ -525,93 +191,117 @@ export default function Condominium() {
             Featured Properties
           </h2>
           <p className="text-gray-600 text-lg md:text-xl leading-relaxed">
-            Discover <span className="font-semibold text-gray-900">{properties.length}</span> premium condominium properties in prime locations
+            Discover <span className="font-semibold text-gray-900">{Properties.length}</span> premium condominium properties in prime locations
           </p>
           <div className="mt-6 w-24 h-1 bg-linear-to-r from-gray-700 to-gray-900 mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-          {properties.map((property) => (
-            <div
-              key={property.id}
-              className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
-            >
-              {/* Image */}
-              <div className="relative h-52 sm:h-60 md:h-64 overflow-hidden">
-                <Image
-                  src={property.image}
-                  alt={property.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                  {property.status}
-                </div>
-                
-                {/* Price overlay on image */}
-                <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/60 to-transparent p-4">
-                  <p className="text-white text-2xl sm:text-3xl font-bold">{property.price}</p>
-                </div>
-              </div>
+        {/* Property List with Loading and Empty States */}
+        {isLoadingProperties ? (
+          <div className="text-center py-12">
+            <div className="inline-block w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+            <p className="text-gray-600 mt-4">Loading properties...</p>
+          </div>
+        ) : Properties.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl shadow-md p-8">
+            <p className="text-gray-600 text-lg">No properties available yet.</p>
+            <p className="text-sm text-gray-400 mt-2">Check your API route and database connection.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+            {Properties.map((property) => {
+              // Ensure images array exists
+              let imagesArray: string[] = []
+              if (property.images) {
+                imagesArray = Array.isArray(property.images)
+                  ? property.images
+                  : JSON.parse(property.images)
+              }
+              const mainImage = imagesArray[0] || "/property-placeholder.jpg"
 
-              {/* Content */}
-              <div className="p-5 sm:p-6 bg-white">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 group-hover:text-gray-700 transition-colors">
-                  {property.title}
-                </h3>
-
-                {/* Property Details - Enhanced with icons in colored backgrounds */}
-                <div className="grid grid-cols-3 gap-3 mb-5 pb-5 border-b border-gray-100">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                      <FaBed className="text-gray-700 text-lg" />
+              return (
+                <div
+                  key={property.id}
+                  className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                >
+                  {/* Image */}
+                  <div className="relative h-52 sm:h-60 md:h-64 overflow-hidden">
+                    <Image
+                      src={mainImage}
+                      alt={property.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                      {property.status}
                     </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500">Bedrooms</p>
-                      <p className="text-sm font-bold text-gray-900">{property.bedrooms}</p>
+                    
+                    {/* Price overlay on image */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/60 to-transparent p-4">
+                      <p className="text-white text-2xl sm:text-3xl font-bold">{property.price}</p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                      <FaBath className="text-gray-700 text-lg" />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500">Bathrooms</p>
-                      <p className="text-sm font-bold text-gray-900">{property.bathrooms}</p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                      <FaRulerCombined className="text-gray-700 text-lg" />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500">Area</p>
-                      <p className="text-sm font-bold text-gray-900">{property.area}</p>
-                    </div>
-                  </div>
-                </div>
 
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
-                  {property.description}
-                </p>
+                  {/* Content */}
+                  <div className="p-5 sm:p-6 bg-white">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 group-hover:text-gray-700 transition-colors">
+                      {property.title}
+                    </h3>
 
-                {/* Buttons - Enhanced */}
-                <div className="flex gap-2 w-full">
-                  <button 
-                  onClick = {() => handleProtectedAction('view', property)}
-                  className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
-                    View Details
-                  </button>
-                  <Link href="/contact">
-                      <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
-                        Contact
+                    {/* Property Details - Enhanced with icons in colored backgrounds */}
+                    <div className="grid grid-cols-3 gap-3 mb-5 pb-5 border-b border-gray-100">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                          <FaBed className="text-gray-700 text-lg" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">Bedrooms</p>
+                          <p className="text-sm font-bold text-gray-900">{property.bedrooms}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                          <FaBath className="text-gray-700 text-lg" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">Bathrooms</p>
+                          <p className="text-sm font-bold text-gray-900">{property.bathrooms}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                          <FaRulerCombined className="text-gray-700 text-lg" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">Area</p>
+                          <p className="text-sm font-bold text-gray-900">{property.area}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
+                      {property.description}
+                    </p>
+
+                    {/* Buttons - Enhanced */}
+                    <div className="flex gap-2 w-full">
+                      <button 
+                        onClick={() => handleProtectedAction('view', property)}
+                        className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50">
+                        View Details
                       </button>
-                    </Link>
+                      <Link href="/contact">
+                        <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
+                          Contact
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Newsletter Section - Enhanced */}

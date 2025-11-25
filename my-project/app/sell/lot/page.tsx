@@ -44,6 +44,23 @@ interface Property {
 interface ModalProperty extends Property {
   location: string;
   images: string[];
+  id: number
+  title: string
+  price: string
+  status: string
+  bedrooms: string
+  bathrooms: string
+  area: string
+  description: string
+  floorLevel?: string
+  parking?: string
+  yearBuilt?: string
+  propertyId?: string
+  features?: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  }
 }
 
 // --- Main Component ---
