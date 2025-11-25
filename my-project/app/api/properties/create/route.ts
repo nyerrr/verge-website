@@ -1,4 +1,4 @@
-// create-route.ts
+// app/api/properties/create/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -7,7 +7,9 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
+    // Parse request body
     const data = await request.json();
+    console.log('Received data:', data);
 
     // --- Authentication/Authorization ---
     const userDataHeader = request.headers.get("user-data");
@@ -20,43 +22,93 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // --- Normalize category/type ---
-    const normalizedCategory = data.category?.toLowerCase() ?? null;
-    const normalizedType = data.type?.toLowerCase() ?? null;
+    // --- Validate required fields ---
+    if (!data.title || !data.propertyId || !data.price) {
+      return NextResponse.json(
+        { error: "Missing required fields: title, propertyId, or price" },
+        { status: 400 }
+      );
+    }
 
-    // --- Handle main image and JSON fields ---
-    const mainImage: string | null =
-      Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : null;
+    // --- Normalize category/type (keep as lowercase) ---
+    const normalizedCategory = data.category?.toLowerCase() || null;
+    const normalizedType = data.type?.toLowerCase() || null;
 
-    const imagesJson: string | null = data.images ? JSON.stringify(data.images) : "[]";
-const featuresJson: string | null = data.features ? JSON.stringify(data.features) : "{}";
+    // --- Handle images ---
+    let imagesArray: string[] = [];
+    
+    if (data.images) {
+      try {
+        // If images is already an array, use it
+        if (Array.isArray(data.images)) {
+          imagesArray = data.images;
+        } 
+        // If images is a string, try to parse it
+        else if (typeof data.images === 'string') {
+          imagesArray = JSON.parse(data.images);
+        }
+      } catch (err) {
+        console.error('Error parsing images:', err);
+        imagesArray = ['/property-placeholder.jpg'];
+      }
+    }
 
-const newProperty = await prisma.property.create({
-  data: {
-    title: data.title,
-    description: data.description,
-    price: data.price,
-    location: data.location ?? undefined,
-    category: normalizedCategory ?? undefined,
-    type: normalizedType ?? undefined,
-    status: data.status ?? undefined,
-    bedrooms: data.bedrooms ?? undefined,
-    bathrooms: data.bathrooms ?? undefined,
-    area: data.area ?? undefined,
-    floorLevel: data.floorLevel ?? undefined,
-    parking: data.parking ?? undefined,
-    yearBuilt: data.yearBuilt ?? undefined,
-    propertyId: data.propertyId ?? undefined,
-    image: mainImage ?? undefined,      // main image
-    images: imagesJson,            // JSON string or null
-    features: featuresJson,        // JSON string or null
-    createdBy: userData.email,
-  },
-});
+    // Fallback to placeholder if no images
+    if (imagesArray.length === 0) {
+      imagesArray = ['/property-placeholder.jpg'];
+    }
 
+    const mainImage = imagesArray[0];
+    const imagesJson = JSON.stringify(imagesArray);
 
-    // --- Revalidate property listing page ---
-    revalidatePath("/lot");
+    // --- Handle features ---
+    let featuresJson = "{}";
+    if (data.features) {
+      try {
+        featuresJson = typeof data.features === 'string' 
+          ? data.features 
+          : JSON.stringify(data.features);
+      } catch (err) {
+        console.error('Error parsing features:', err);
+      }
+    }
+
+    console.log('Creating property with:', {
+      category: normalizedCategory,
+      type: normalizedType,
+      images: imagesJson,
+      mainImage
+    });
+
+    // --- Create property in database ---
+    const newProperty = await prisma.property.create({
+      data: {
+        title: data.title,
+        description: data.description || '',
+        price: data.price,
+        location: data.location || '',
+        category: normalizedCategory,
+        type: normalizedType,
+        status: data.status || 'Available',
+        bedrooms: data.bedrooms || '',
+        bathrooms: data.bathrooms || '',
+        area: data.area || '',
+        floorLevel: data.floorLevel || null,
+        parking: data.parking || null,
+        yearBuilt: data.yearBuilt || null,
+        propertyId: data.propertyId,
+        image: mainImage,
+        images: imagesJson,
+        features: featuresJson,
+        createdBy: userData.email,
+      },
+    });
+
+    console.log('Property created successfully:', newProperty.id);
+
+    // --- Revalidate property listing pages ---
+    revalidatePath("/properties");
+    revalidatePath("/admin");
 
     return NextResponse.json({
       success: true,
@@ -66,8 +118,14 @@ const newProperty = await prisma.property.create({
 
   } catch (error: any) {
     console.error("Create property error:", error);
+    
+    // Return proper JSON error response
     return NextResponse.json(
-      { error: error.message || "Failed to create property" },
+      { 
+        success: false,
+        error: error.message || "Failed to create property",
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     );
   } finally {

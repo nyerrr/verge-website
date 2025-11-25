@@ -120,11 +120,6 @@ export default function ShortTermRental() {
     fetchProperties()
   }, [])
 
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
   useEffect(() => {
     document.body.style.overflow = selectedProperty ? "hidden" : "auto"
