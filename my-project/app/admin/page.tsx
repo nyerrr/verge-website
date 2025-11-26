@@ -95,6 +95,7 @@ export default function AdminPage() {
   const [filterType, setFilterType] = useState<string>('all')
   const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null)
   const [isEditMode, setIsEditMode] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   
   const router = useRouter()
 
@@ -449,10 +450,10 @@ export default function AdminPage() {
   return (
     <div className="text-black min-h-screen bg-gray-100">
       <main className="container mx-auto px-4 py-8">
-        {/* Header with Logout */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        </div>
+          {/* Header with Logout */}
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          </div>
 
         {/* Add Property Button */}
         <button

@@ -77,7 +77,7 @@ export default function Lot() {
   // --- Data Fetching Logic ---
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties?category=lot&type=sell');
+      const response = await fetch('/api/properties?category=house-and-lot&type=sell');
       
       // Check if the response is OK before parsing
       if (!response.ok) {
