@@ -76,9 +76,9 @@ const CATEGORY_OPTIONS = [
 ]
 
 const TYPE_OPTIONS = [
-  { value: 'sell', label: 'Sale' },
-  { value: 'rent', label: 'Rent' },
-  { value: 'buy', label: 'Buy' }
+  { value: 'sell', label: 'For Sale' },
+  { value: 'rent', label: 'For Rent' },
+  { value: 'buy', label: 'For Purchase' }
 ]
 
 // ============================================
@@ -93,6 +93,8 @@ export default function AdminPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [filterType, setFilterType] = useState<string>('all')
+  const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null)
+  const [isEditMode, setIsEditMode] = useState(false)
   
   const router = useRouter()
 
@@ -179,7 +181,44 @@ export default function AdminPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    
+    // If type is changed, reset category to a valid one for that type
+    if (name === 'type') {
+      let newCategory: PropertyFormData['category'] = formData.category
+      
+      if (value === 'sell' && !['house-and-lot', 'condominium'].includes(formData.category)) {
+        newCategory = 'house-and-lot'
+      } else if (value === 'rent' && !['short-term', 'long-term'].includes(formData.category)) {
+        newCategory = 'short-term'
+      } else if (value === 'buy' && !['pre-selling', 'ready-for-occupancy'].includes(formData.category)) {
+        newCategory = 'pre-selling'
+      }
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        type: value as PropertyFormData['type'],
+        category: newCategory 
+      }))
+    } else if (name === 'category') {
+      setFormData(prev => ({ 
+        ...prev, 
+        category: value as PropertyFormData['category']
+      }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
+  }
+
+  // Helper function to check if a category is available for the current type
+  const isCategoryAvailable = (categoryValue: string, currentType: string) => {
+    if (currentType === 'sell') {
+      return ['house-and-lot', 'condominium'].includes(categoryValue)
+    } else if (currentType === 'rent') {
+      return ['short-term', 'long-term'].includes(categoryValue)
+    } else if (currentType === 'buy') {
+      return ['pre-selling', 'ready-for-occupancy'].includes(categoryValue)
+    }
+    return true
   }
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -292,6 +331,61 @@ export default function AdminPage() {
     setFormData(INITIAL_FORM_STATE)
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
     if (fileInput) fileInput.value = ''
+  } 
+  
+  const handleEdit = (property: Property) => {
+  // Parse images
+  let imagesArray: string[] = []
+  try {
+    if (Array.isArray(property.images)) {
+      imagesArray = property.images
+    } else if (typeof property.images === 'string') {
+      imagesArray = JSON.parse(property.images)
+    }
+  } catch (err) {
+    console.error('Error parsing images:', err)
+    imagesArray = []
+  }
+
+  // Parse features
+  let featuresObj: PropertyFeatures = {
+    interior: ['Modern kitchen', 'Spacious living room'],
+    amenities: ['Swimming pool', '24/7 Security'],
+    nearby: ['Schools nearby', 'Shopping malls']
+  }
+  try {
+    if (typeof property.features === 'string') {
+      featuresObj = JSON.parse(property.features)
+    } else if (property.features) {
+      featuresObj = property.features
+    }
+  } catch (err) {
+    console.error('Error parsing features:', err)
+  }
+
+  // Set form data with property values
+  setFormData({
+    title: property.title,
+    description: property.description,
+    price: property.price,
+    location: property.location,
+    category: property.category,
+    type: property.type,
+    status: property.status,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    area: property.area,
+    floorLevel: property.floorLevel || '',
+    parking: property.parking || '',
+    yearBuilt: property.yearBuilt || '',
+    propertyId: property.propertyId,
+    images: imagesArray,
+    features: featuresObj
+  })
+
+  setEditingPropertyId(property.id)
+  setIsEditMode(true)
+  setShowAddForm(true)
   }
 
   const handleDelete = async (id: string, title: string) => {
@@ -332,6 +426,11 @@ export default function AdminPage() {
     }))
   }
 
+  const cancelEdit = () => {
+    resetForm()
+    setShowAddForm(false)
+  }
+
   // ============================================
   // RENDER: LOADING STATE
   // ============================================
@@ -353,6 +452,12 @@ export default function AdminPage() {
         {/* Header with Logout */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
+          >
+            Logout
+          </button>
         </div>
 
         {/* Add Property Button */}
@@ -366,7 +471,19 @@ export default function AdminPage() {
         {/* Add Property Form */}
         {showAddForm && (
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 className="cursor-pointer text-2xl font-bold text-gray-900 mb-6">Add New Property</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {isEditMode ? '✏️ Edit Property' : '➕ Add New Property'}
+              </h2>
+              {isEditMode && (
+                <button
+                  onClick={cancelEdit}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium text-sm"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
             
             <div className="space-y-4">
               {/* Basic Information */}
@@ -419,19 +536,6 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  >
-                    {CATEGORY_OPTIONS.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
                     name="type"
                     value={formData.type}
                     onChange={handleInputChange}
@@ -440,6 +544,24 @@ export default function AdminPage() {
                     {TYPE_OPTIONS.map(option => (
                       <option key={option.value} value={option.value}>
                         {option.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  >
+                    {CATEGORY_OPTIONS.map(option => (
+                      <option 
+                        key={option.value} 
+                        value={option.value}
+                        disabled={!isCategoryAvailable(option.value, formData.type)}
+                      >
+                        {option.label}
+                        {!isCategoryAvailable(option.value, formData.type) && ' (Not available for this type)'}
                       </option>
                     ))}
                   </select>
@@ -591,7 +713,9 @@ export default function AdminPage() {
                 disabled={isSubmitting}
                 className="w-full py-3 bg-black text-white rounded-lg font-semibold hover:shadow-[0_0_20px_black] transition duration-300 hover:scale-102 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                {isSubmitting ? '⏳ Adding Property...' : '✅ Add Property'}
+                {isSubmitting 
+                  ? (isEditMode ? '⏳ Updating Property...' : '⏳ Adding Property...') 
+                  : (isEditMode ? '💾 Update Property' : '✅ Add Property')}
               </button>
             </div>
           </div>
@@ -630,7 +754,7 @@ export default function AdminPage() {
 
               <button
                 onClick={fetchProperties}
-                className="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm"
               >
                 🔄 Refresh
               </button>
@@ -688,12 +812,20 @@ export default function AdminPage() {
                         <span className="text-sm text-gray-600">{property.status}</span>
                       </td>
                       <td className="px-4 py-4 text-center">
-                        <button
-                          onClick={() => handleDelete(property.id, property.title)}
-                          className="px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-medium"
-                        >
-                          Delete
-                        </button>
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleEdit(property)}
+                            className="px-3 py-1 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(property.id, property.title)}
+                            className="px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-medium"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
