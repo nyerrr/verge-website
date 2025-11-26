@@ -353,12 +353,6 @@ export default function AdminPage() {
         {/* Header with Logout */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
-          >
-            Logout
-          </button>
         </div>
 
         {/* Add Property Button */}
@@ -372,7 +366,7 @@ export default function AdminPage() {
         {/* Add Property Form */}
         {showAddForm && (
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Add New Property</h2>
+            <h2 className="cursor-pointer text-2xl font-bold text-gray-900 mb-6">Add New Property</h2>
             
             <div className="space-y-4">
               {/* Basic Information */}
@@ -636,7 +630,7 @@ export default function AdminPage() {
 
               <button
                 onClick={fetchProperties}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm"
+                className="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm"
               >
                 🔄 Refresh
               </button>
