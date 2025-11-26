@@ -8,7 +8,7 @@ async function main() {
   
   // Check if admin exists
   const existing = await prisma.user.findUnique({
-    where: { email: 'admin@verge.com' }
+    where: { email: 'admin@companero.com' }
   })
 
   if (existing) {
@@ -18,7 +18,7 @@ async function main() {
   
   const admin = await prisma.user.create({
     data: {
-      email: 'admin@verge.com',
+      email: 'admin@companero.com',
       password: hashedPassword,
       name: 'Admin',
       phone: '09123456789',
@@ -27,7 +27,7 @@ async function main() {
   })
   
   console.log('✅ Admin created!')
-  console.log('Email: admin@verge.com')
+  console.log('Email: admin@companero.com')
   console.log('Password: admin123')
 }
 
