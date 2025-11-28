@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
-import AdminLayout from '../components/AdminLayout'
 
 // ============================================
 // TYPES & INTERFACES
@@ -487,7 +486,7 @@ const toggleSidebar = () => {
             {/* Add Property Button */}
             <button
               onClick={toggleAddForm}
-              className="mb-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold shadow-md hover:shadow-lg transform hover:scale-105 duration-200 flex items-center space-x-2"
+              className="cursor-pointer mb-6 px-6 py-3 bg-black duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 text-white rounded-lg transition font-semibold shadow-md transform hover:scale-105  flex items-center space-x-2"
             >
               {showAddForm ? (
                 <>
@@ -504,7 +503,7 @@ const toggleSidebar = () => {
 
             {/* Add/Edit Property Form */}
             {showAddForm && (
-              <div className="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-200">
+              <div className="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-200 text-black">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
                     <span>{isEditMode ? '✏️' : '➕'}</span>
@@ -520,7 +519,7 @@ const toggleSidebar = () => {
                   )}
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-6 text-black">
                   {/* Basic Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center space-x-2">
@@ -767,7 +766,7 @@ const toggleSidebar = () => {
                         multiple
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                         onChange={handleImageChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-black file:text-white file:duration-300 hover:file:shadow-[0_0_20px_black] hover:file:shadow-black-/50 hover:file:scale-105 file:cursor-pointer transition"
                       />
                       <p className="text-xs text-gray-500 mt-1">
                         Accepted formats: JPG, PNG, WebP (Max 5MB per image)
@@ -830,14 +829,14 @@ const toggleSidebar = () => {
                 <button
                   onClick={cancelEdit}
                   type="button"
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition duration-200"
+                  className="hover:scale-105 cursor-pointer px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 flex items-center space-x-2"
+                  className="cursor-pointer px-6 py-3 bg-black text-white rounded-lg font-semibold hover:shadow-[0_0_20px_black] hover:shadow-black-/50 transition duration-200 shadow-md hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center space-x-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -873,9 +872,9 @@ const toggleSidebar = () => {
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white shadow-sm hover:border-gray-400 transition"
+                className="px-4 py-2 border text-black cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white shadow-sm hover:border-gray-400 transition"
               >
-                <option value="all">All Categories</option>
+                <option value="all" >All Categories</option>
                 {CATEGORY_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
@@ -884,7 +883,7 @@ const toggleSidebar = () => {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white shadow-sm hover:border-gray-400 transition"
+                className="px-4 py-2 border text-black cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white shadow-sm hover:border-gray-400 transition"
               >
                 <option value="all">All Types</option>
                 {TYPE_OPTIONS.map(opt => (
@@ -894,7 +893,7 @@ const toggleSidebar = () => {
 
               <button
                 onClick={fetchProperties}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm shadow-sm flex items-center space-x-2"
+                className="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm shadow-sm flex items-center space-x-2"
               >
                 <span>🔄</span>
                 <span>Refresh</span>
@@ -981,18 +980,6 @@ const toggleSidebar = () => {
         </div>
       </div>
     </main>
-
-    {/* Footer */}
-    <footer className="bg-white border-t border-gray-200 py-4 px-6 shadow-inner">
-      <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
-        <p>© 2024 Real Estate Admin. All rights reserved.</p>
-        <div className="flex space-x-4 mt-2 sm:mt-0">
-          <a href="#" className="hover:text-gray-900 transition">Privacy</a>
-          <a href="#" className="hover:text-gray-900 transition">Terms</a>
-          <a href="#" className="hover:text-gray-900 transition">Support</a>
-        </div>
-      </div>
-    </footer>
   </div>
 </div>
     )

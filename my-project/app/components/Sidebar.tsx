@@ -1,4 +1,3 @@
-// components/Sidebar.tsx
 "use client"
 
 interface SidebarProps {
@@ -26,25 +25,10 @@ export default function Sidebar({ isOpen, onClose, onToggle, activeTab, onTabCha
 
   return (
     <>
-      {/* Toggle Button - Always visible, poking out from the side */}
-      <button
-        onClick={onToggle}
-        className={`
-          fixed top-6 z-50 
-          w-8 h-12 bg-blue-600 text-white rounded-r-lg
-          flex items-center justify-center
-          hover:bg-blue-700 transition-all shadow-lg
-          ${isOpen ? 'left-64' : 'left-0'}
-        `}
-        title={isOpen ? 'Close sidebar' : 'Open sidebar'}
-      >
-        {isOpen ? '◀' : '▶'}
-      </button>
-
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -58,11 +42,23 @@ export default function Sidebar({ isOpen, onClose, onToggle, activeTab, onTabCha
           w-64 shadow-2xl
         `}
       >
+        {/* Toggle Button - always attached to sidebar */}
+        <button
+        onClick={onToggle}
+        className="
+        absolute top-6 -right-10
+        w-10 h-12 bg-black text-white rounded-r-lg
+        flex items-center justify-center shadow-lg
+       duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 transition cursor-pointer"
+        >
+        {isOpen ? '◀' : '▶'}
+        </button>
+
         {/* Sidebar Header */}
         <div className="p-6 border-b border-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-lg">
+              <div className=" w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-lg">
                 A
               </div>
               <div>
@@ -105,7 +101,7 @@ export default function Sidebar({ isOpen, onClose, onToggle, activeTab, onTabCha
                     if (window.innerWidth < 1024) onClose()
                   }}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 rounded-lg
+                    cursor-pointer w-full flex items-center space-x-3 px-4 py-3 rounded-lg
                     transition-all duration-200 text-left
                     ${activeTab === item.id
                       ? 'bg-blue-600 text-white shadow-lg scale-105'
@@ -125,7 +121,7 @@ export default function Sidebar({ isOpen, onClose, onToggle, activeTab, onTabCha
         <div className="p-4 border-t border-gray-800">
           <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-all">
             <span className="text-xl">❓</span>
-            <span className="font-medium">Help & Support</span>
+            <span className="font-medium cursor-pointer">Help & Support</span>
           </button>
         </div>
       </aside>
