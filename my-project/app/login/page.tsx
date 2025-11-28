@@ -1,10 +1,12 @@
 "use client"
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import {HiEye, HiEyeOff} from 'react-icons/hi'
+import { HiEye, HiEyeOff } from 'react-icons/hi'
 import PageTransition from '../components/PageTransition'
+import GoogleAuthButton from '../components/GoogleAuthButton'
+import { useSession } from "next-auth/react"
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false)
@@ -13,41 +15,72 @@ export default function Login() {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
+    const { data: session, status } = useSession()
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (status === "loading") return // Wait for session to load
+        
+        if (session) {
+            const userType = session.user?.userType
+            if (userType === 'admin') {
+                router.push('/admin')
+            } else {
+                router.push('/')
+            }
+        }
+    }, [session, status, router])
 
     const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
+        e.preventDefault()
+        setError('')
+        setIsLoading(true)
 
-    try {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        })
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            })
 
-        const data = await response.json()
+            const data = await response.json()
 
-        if (!response.ok) {
-            throw new Error(data.error)
+            if (!response.ok) {
+                throw new Error(data.error)
+            }
+
+            // Save user data
+            localStorage.setItem('userData', JSON.stringify(data.user))
+
+            // Redirect based on userType with full page reload
+            if (data.user.userType === 'admin') {
+                window.location.href = '/admin'
+            } else {
+                window.location.href = '/'
+            }
+            
+        } catch (err: any) {
+            setError(err.message || 'Login failed')
+        } finally {
+            setIsLoading(false)
         }
-
-        // Save user data
-        localStorage.setItem('userData', JSON.stringify(data.user))
-
-        // Redirect based on userType with full page reload
-        if (data.user.userType === 'admin') {
-            window.location.href = '/admin'
-        } else {
-            window.location.href = '/'
-        }
-        
-    } catch (err: any) {
-        setError(err.message || 'Login failed')
-    } finally {
-        setIsLoading(false)
     }
-}
+
+    // Show loading while checking session
+    if (status === "loading") {
+        return (
+            <PageTransition>
+                <div className="relative min-h-screen w-full flex items-center justify-center">
+                    <Image src="/The_Albany1.png" alt="login" fill className="object-cover" />
+                    <div className="absolute inset-0 bg-black/40 z-0"></div>
+                    <div className="relative z-10 text-white text-xl">
+                        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </PageTransition>
+        )
+    }
 
     return (
         <PageTransition>
@@ -56,8 +89,24 @@ export default function Login() {
                 <div className="absolute inset-0 bg-black/40 z-0"></div>
                 
                 <div className="relative z-10 w-full max-w-md mx-8 rounded-lg shadow-xl p-8 bg-white border-2 border-gray-800">
-                    <h2 className="text-2xl font-bold mb-6 text-black">Login</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-black text-center">Welcome Back</h2>
                     
+                    {/* Google Sign-In Button */}
+                    <div className="mb-6">
+                        <GoogleAuthButton />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+                        </div>
+                    </div>
+
+                    {/* Email/Password Login Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {error && (
                             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -109,13 +158,13 @@ export default function Login() {
                         <button 
                             type="submit" 
                             disabled={isLoading}
-                            className="w-full py-2 px-4 text-white bg-black rounded-full hover:scale-105 transition duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] disabled:opacity-50"
+                            className="w-full py-2 px-4 text-white bg-black rounded-full hover:scale-105 transition duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? 'Signing in...' : 'Sign-in'}
                         </button>
                         
                         <Link href="/signup" className="block text-center text-sm text-blue-600 hover:underline mt-4">
-                            Don't have an account?
+                            Don't have an account? <span className="font-semibold">Sign up</span>
                         </Link>
                     </form>
                 </div>

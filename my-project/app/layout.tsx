@@ -5,6 +5,7 @@ import { Changa_One } from "next/font/google";
 import "./globals.css";
 import Navigation from "./components/Navigation";
 import AdminFloatingButton from "./components/AdminFloatingButton";
+import SessionProvider from "./components/SessionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,14 +46,16 @@ export default function RootLayout({
       <body
         className={`${poppins.className} ${geistSans.variable} ${geistMono.variable} ${changaOne.variable} antialiased`}
       >
-        {/* Top Navigation */}
-        <Navigation />
+        <SessionProvider>
+          {/* Top Navigation */}
+          <Navigation />
 
-        {/* Main content */}
-        <main>{children}</main>
+          {/* Main content */}
+          <main>{children}</main>
 
-        {/* Floating Admin Button */}
-        <AdminFloatingButton />
+          {/* Floating Admin Button */}
+          <AdminFloatingButton />
+        </SessionProvider>
       </body>
     </html>
   );

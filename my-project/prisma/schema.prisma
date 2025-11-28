@@ -1,3 +1,4 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,42 +8,78 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  phone     String
-  userType  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ============================================
+// NEXTAUTH MODELS
+// ============================================
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
-// prisma/schema.prisma
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  userType      String    @default("user")
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// PROPERTY MODEL
+// ============================================
 model Property {
-  // 🎯 CRITICAL FIX: Use SQLite's standard Int ID with autoincrement.
-  // This resolves the P3018 datatype mismatch error.
-  id           Int       @id @default(autoincrement())
-  
-  title        String
-  description  String
-  price        String
-  location     String?
-  category     String?
-  type         String?
-  status       String?
-  bedrooms     String?
-  bathrooms    String?
-  area         String?
-  floorLevel   String?
-  parking      String?
-  yearBuilt    String?
-  propertyId   String?
-  image         String?  // main image
-  images        String? // additional images
-  features     String? // Stores JSON object of features
-  createdBy    String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       String
+  location    String
+  category    String
+  type        String
+  status      String
+  bedrooms    String
+  bathrooms   String
+  area        String
+  floorLevel  String?
+  parking     String?
+  yearBuilt   String?
+  propertyId  String   @unique
+  images      String   // Changed from Json to String for SQLite
+  features    String   // Changed from Json to String for SQLite
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
