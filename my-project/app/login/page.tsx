@@ -1,6 +1,5 @@
 "use client"
 import Image from 'next/image'
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
@@ -8,10 +7,12 @@ import PageTransition from '../components/PageTransition'
 import GoogleAuthButton from '../components/GoogleAuthButton'
 import { useSession } from "next-auth/react"
 
-export default function Login() {
+export default function Auth() {
+    const [isSignUp, setIsSignUp] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [name, setName] = useState('')
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
@@ -19,7 +20,7 @@ export default function Login() {
 
     // Redirect if already logged in
     useEffect(() => {
-        if (status === "loading") return // Wait for session to load
+        if (status === "loading") return
         
         if (session) {
             const userType = session.user?.userType
@@ -31,16 +32,46 @@ export default function Login() {
         }
     }, [session, status, router])
 
+    // Gmail validation function
+    const isValidGmail = (email: string) => {
+        const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i
+        return gmailRegex.test(email)
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
+
+        // Validate Gmail
+        if (!isValidGmail(email)) {
+            setError('Please use a valid Gmail address (@gmail.com)')
+            return
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters')
+            return
+        }
+
+        // Validate name for signup
+        if (isSignUp && !name.trim()) {
+            setError('Please enter your name')
+            return
+        }
+
         setIsLoading(true)
 
         try {
-            const response = await fetch('/api/auth/login', {
+            const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login'
+            const body = isSignUp 
+                ? { email: email.toLowerCase(), password, name }
+                : { email: email.toLowerCase(), password }
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify(body),
             })
 
             const data = await response.json()
@@ -60,7 +91,7 @@ export default function Login() {
             }
             
         } catch (err: any) {
-            setError(err.message || 'Login failed')
+            setError(err.message || 'Authentication failed')
         } finally {
             setIsLoading(false)
         }
@@ -89,7 +120,12 @@ export default function Login() {
                 <div className="absolute inset-0 bg-black/40 z-0"></div>
                 
                 <div className="relative z-10 w-full max-w-md mx-8 rounded-lg shadow-xl p-8 bg-white border-2 border-gray-800">
-                    <h2 className="text-2xl font-bold mb-6 text-black text-center">Welcome Back</h2>
+                    <h2 className="text-2xl font-bold mb-2 text-black text-center">
+                        {isSignUp ? 'Create Account' : 'Welcome Back'}
+                    </h2>
+                    <p className="text-sm text-gray-600 text-center mb-6">
+                        {isSignUp ? 'Sign up with your Gmail address' : 'Sign in to your account'}
+                    </p>
                     
                     {/* Google Sign-In Button */}
                     <div className="mb-6">
@@ -102,11 +138,13 @@ export default function Login() {
                             <div className="w-full border-t border-gray-300"></div>
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+                            <span className="px-2 bg-white text-gray-500">
+                                Or {isSignUp ? 'sign up' : 'continue'} with email
+                            </span>
                         </div>
                     </div>
 
-                    {/* Email/Password Login Form */}
+                    {/* Email/Password Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {error && (
                             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -114,9 +152,27 @@ export default function Login() {
                             </div>
                         )}
 
+                        {isSignUp && (
+                            <div>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Full Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
+                                    placeholder="John Doe"
+                                    required={isSignUp}
+                                    disabled={isLoading}
+                                />
+                            </div>
+                        )}
+
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
+                                Gmail Address
                             </label>
                             <input
                                 type="email"
@@ -124,10 +180,11 @@ export default function Login() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
-                                placeholder="example@gmail.com"
+                                placeholder="yourname@gmail.com"
                                 required
                                 disabled={isLoading}
                             />
+                            <p className="text-xs text-gray-500 mt-1">Only Gmail accounts are accepted</p>
                         </div>
                         
                         <div className="w-full">
@@ -141,8 +198,9 @@ export default function Login() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full px-4 py-2 pr-12 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
-                                    placeholder="password..."
+                                    placeholder={isSignUp ? "Create a password (min. 6 characters)" : "Enter your password"}
                                     required
+                                    minLength={6}
                                     disabled={isLoading}
                                 />
                                 <button 
@@ -160,12 +218,21 @@ export default function Login() {
                             disabled={isLoading}
                             className="w-full py-2 px-4 text-white bg-black rounded-full hover:scale-105 transition duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isLoading ? 'Signing in...' : 'Sign-in'}
+                            {isLoading ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign In')}
                         </button>
                         
-                        <Link href="/signup" className="block text-center text-sm text-blue-600 hover:underline mt-4">
-                            Don't have an account? <span className="font-semibold">Sign up</span>
-                        </Link>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setIsSignUp(!isSignUp)
+                                setError('')
+                            }}
+                            className="block w-full text-center text-sm text-blue-600 hover:underline mt-4"
+                        >
+                            {isSignUp 
+                                ? 'Already have an account? Sign in' 
+                                : "Don't have an account? Create one"}
+                        </button>
                     </form>
                 </div>
             </div>

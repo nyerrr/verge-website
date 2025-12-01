@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Poppins } from 'next/font/google'
 import { usePathname, useRouter } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -15,41 +16,48 @@ const poppins = Poppins({
 export default function Navigation() {
   const [open, setOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
-  const [showSearchInHeader, setShowSearchInHeader] = useState(false)
+  const [localUser, setLocalUser] = useState<any>(null)
   const panelRef = useRef<HTMLElement | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement | null>(null)
   const pathname = usePathname()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userName, setUserName] = useState('')
   const router = useRouter()
-  const [user, setUser] = useState<any>(null);
-
+  
+  // Use NextAuth session
+  const { data: session, status } = useSession()
+  
+  // Check localStorage for email/password login
   useEffect(() => {
-    const userDataStr = localStorage.getItem('userData');
-    if (userDataStr) {
-      setUser(JSON.parse(userDataStr));
+    const userData = localStorage.getItem('userData')
+    if (userData) {
+      try {
+        setLocalUser(JSON.parse(userData))
+      } catch (error) {
+        console.error('Error parsing user data:', error)
+        localStorage.removeItem('userData')
+      }
     }
   }, [])
 
-  // Check login status
-  useEffect (() => {
-    const userData = localStorage.getItem('userData')
-      if (userData) {
-        const user = JSON.parse(userData)
-        setIsLoggedIn (true)
-        setUserName (user.name)
-      }
-  }, [])
+  // Determine login status and user info
+  const isLoggedIn = status === 'authenticated' || !!localUser
+  const userName = session?.user?.name || session?.user?.email || localUser?.name || localUser?.email || 'User'
+  const userType = session?.user?.userType || localUser?.userType || 'user'
 
-  //Logout
-  const handleLogout = () => {
+  // Handle logout for both NextAuth and email/password
+  const handleLogout = async () => {
+    // Clear localStorage
     localStorage.removeItem('userData')
-    localStorage.removeItem('token')
-    setIsLoggedIn (false)
-    setUserName('')
-    window.location.href = '/login'
+    setLocalUser(null)
+    
+    // Sign out from NextAuth if authenticated
+    if (status === 'authenticated') {
+      await signOut({ redirect: false })
+    }
+    
+    router.push('/login')
     setOpen(false)
   }
+
   // Prevent background scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -156,7 +164,7 @@ export default function Navigation() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-2 xl:px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
+                    className={`px-2 xl:px-3 py-2 rounded leading-none hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
                       pathname === item.href ? 'border-b-2 border-black font-bold' : ''
                     }`}
                   >
@@ -171,7 +179,7 @@ export default function Navigation() {
                 {Object.entries(dropdownMenus).map(([key, menu]) => (
                   <div key={key} className="relative group">
                     <button
-                      className={`px-2 xl:px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
+                      className={`px-2 xl:px-3 py-2 leading-none rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
                         pathname.startsWith(`/${key}`) ? 'border-b-2 border-black font-bold' : ''
                       }`}
                     >
@@ -218,73 +226,72 @@ export default function Navigation() {
             <div className="flex text-black items-center gap-2 sm:gap-3">
               {/* Search Bar - appears after scrolling */}
               {pathname !== '/' && (
-  <form
-    onSubmit={(e) => {
-      e.preventDefault()
-      const query = (e.currentTarget.search.value as string).trim()
-      if (query) {
-        router.push(`/search?query=${encodeURIComponent(query)}`)
-      }
-    }}
-    className="relative shrink-0 w-40 sm:w-56 md:w-64 lg:w-72 xl:w-80"
-  >
-    {/* Input */}
-    <input
-      type="text"
-      name="search"
-      placeholder="Search..."
-      className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-sm md:text-base"
-    />
-
-    {/* Magnifying glass icon */}
-    <button
-      type="submit"
-      className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
-    >
-      <svg
-        className="w-4 h-4 sm:w-5 sm:h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-        />
-      </svg>
-    </button>
-  </form>
-)}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    const query = (e.currentTarget.search.value as string).trim()
+                    if (query) {
+                      router.push(`/search?query=${encodeURIComponent(query)}`)
+                    }
+                  }}
+                  className="relative shrink-0 w-40 sm:w-56 md:w-64 lg:w-72 xl:w-80"
+                >
+                  <input
+                    type="text"
+                    name="search"
+                    placeholder="Search..."
+                    className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-sm md:text-base"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+                  >
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </button>
+                </form>
+              )}
 
               {/* Desktop Auth Buttons - Show/Hide based on login status */}
               {isLoggedIn ? (
-              <div className="hidden lg:flex items-center gap-3">
-                <span className="text-sm text-gray-700">Hi, {userName}</span>
-                <button
-                onClick={handleLogout}
-                className=" cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
-                >
-                  Logout
-                </button>
-              </div>
+                <div className="hidden lg:flex items-center gap-3">
+              
+                  {userType === 'admin' && (
+                    <Link
+                      href="/admin"
+                      className="cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] hover:shadow-black-/50 transition duration-300 whitespace-nowrap"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
-              <>
-              <Link
-              href="/login"
-              className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-              >
-                Log in
-              </Link>
-              <Link
-              href="/signup"
-              className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-200 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-              >
-              Sign-up
-              </Link>
-              </>
-            )}
+                <>
+                  <Link
+                    href="/login"
+                    className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+                  >
+                    Log in / Sign up
+                  </Link>
+                </>
+              )}
 
               {/* Mobile Menu Button */}
               <button
@@ -426,40 +433,42 @@ export default function Navigation() {
 
             {/* Mobile Auth Buttons */}
             <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
-            {isLoggedIn ? (
-            <>
-            <div className="px-4 py-2 text-center text-gray-700">
-              Logged in as <span className="font-semibold">{userName}</span>
+              {isLoggedIn ? (
+                <>
+                  <div className="px-4 py-2 text-center text-gray-700">
+                    Logged in as <span className="font-semibold">{userName}</span>
+                  </div>
+                  {userType === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className="block w-full text-center px-4 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300 text-sm sm:text-base font-semibold"
+                    >
+                      Go to Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-center px-4 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 text-sm sm:text-base font-semibold"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="block text-center px-4 py-3 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
+                  >
+                    Log in / Sign up
+                  </Link>
+                </>
+              )}
             </div>
-            <button
-              onClick={handleLogout}
-              className="block w-full text-center px-4 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 text-sm sm:text-base font-semibold"
-            >
-            Logout
-            </button>
-            </>
-            ) : (
-            <>
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="block text-center px-4 py-3 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
-            >
-              Log in
-            </Link>
-            <Link
-            href="/signup"
-            onClick={() => setOpen(false)}
-            className="block text-center px-4 py-3 bg-white border-2 border-gray-900 text-black rounded-full hover:shadow-[0_0_20px_black] transition duration-300 text-sm sm:text-base font-semibold"
-            >
-              Sign up
-            </Link>
-            </>
-          )}
+          </nav>
         </div>
-      </nav>
-    </div>
-  </aside>
-</>
-)
+      </aside>
+    </>
+  )
 }

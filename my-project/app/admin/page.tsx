@@ -1,10 +1,10 @@
 "use client"
-import { useState, useEffect } from 'react'
+
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
-
-
 
 // ============================================
 // TYPES & INTERFACES
@@ -12,6 +12,7 @@ import TopBar from '../components/TopBar'
 interface User {
   id: string
   email: string
+  name?: string
   userType: string
 }
 
@@ -71,170 +72,208 @@ const INITIAL_FORM_STATE: PropertyFormData = {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'pre-selling', label: 'Pre-Selling' },
-  { value: 'ready-for-occupancy', label: 'Ready for Occupancy' },
-  { value: 'house-and-lot', label: 'House and Lot' },
-  { value: 'condominium', label: 'Condominium' },
-  { value: 'short-term', label: 'Short Term Rental' },
-  { value: 'long-term', label: 'Long Term Rental' }
-]
+  { value: 'pre-selling', label: 'Pre-Selling', types: ['buy'] },
+  { value: 'ready-for-occupancy', label: 'Ready for Occupancy', types: ['buy'] },
+  { value: 'house-and-lot', label: 'House and Lot', types: ['sell'] },
+  { value: 'condominium', label: 'Condominium', types: ['sell'] },
+  { value: 'short-term', label: 'Short Term Rental', types: ['rent'] },
+  { value: 'long-term', label: 'Long Term Rental', types: ['rent'] }
+] as const
 
 const TYPE_OPTIONS = [
   { value: 'sell', label: 'For Sale' },
   { value: 'rent', label: 'For Rent' },
   { value: 'buy', label: 'For Purchase' }
-]
+] as const
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+const parseImages = (images: any): string[] => {
+  try {
+    if (Array.isArray(images)) return images
+    if (typeof images === 'string') return JSON.parse(images)
+    return []
+  } catch {
+    return []
+  }
+}
+
+const parseFeatures = (features: any): PropertyFeatures => {
+  const defaultFeatures = {
+    interior: ['Modern kitchen', 'Spacious living room'],
+    amenities: ['Swimming pool', '24/7 Security'],
+    nearby: ['Schools nearby', 'Shopping malls']
+  }
+  try {
+    if (typeof features === 'string') return JSON.parse(features)
+    if (features) return features
+    return defaultFeatures
+  } catch {
+    return defaultFeatures
+  }
+}
+
+const isCategoryAvailable = (categoryValue: string, currentType: string): boolean => {
+  const category = CATEGORY_OPTIONS.find(opt => opt.value === categoryValue)
+  return category ? (category.types as readonly string[]).includes(currentType) : false
+}
+
+// ============================================
+// CUSTOM HOOKS
+// ============================================
+const useAuth = () => {
+  const [userData, setUserData] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Check NextAuth session first
+        if (status === 'authenticated' && session?.user) {
+          const userType = (session.user as any)?.userType
+          if (userType === 'admin') {
+            setUserData({
+              id: (session.user as any).id || '',
+              email: session.user.email || '',
+              name: session.user.name || '',
+              userType: userType
+            })
+            setIsLoading(false)
+            return
+          }
+        }
+
+        // Check localStorage for email/password login
+        const userDataStr = localStorage.getItem('userData')
+        if (!userDataStr) {
+          if (status !== 'loading') {
+            router.push('/login')
+          }
+          return
+        }
+
+        const user = JSON.parse(userDataStr)
+        if (user.userType !== 'admin') {
+          alert('⚠️ Access denied. Admin privileges required.')
+          router.push('/')
+          return
+        }
+
+        setUserData(user)
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        router.push('/login')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (status !== 'loading') {
+      checkAuth()
+    }
+  }, [status, session, router])
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('userData')
+    localStorage.removeItem('token')
+    router.push('/login')
+  }, [router])
+
+  return { userData, isLoading, logout }
+}
 
 // ============================================
 // MAIN COMPONENT
 // ============================================
 export default function AdminPage() {
-  const [userData, setUserData] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { userData, isLoading: authLoading, logout } = useAuth()
+
+  // UI State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('properties')
   const [showAddForm, setShowAddForm] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null)
+
+  // Data State
   const [properties, setProperties] = useState<Property[]>([])
   const [formData, setFormData] = useState<PropertyFormData>(INITIAL_FORM_STATE)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Filter State
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [filterType, setFilterType] = useState<string>('all')
-  const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null)
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('properties')
-  
-  const router = useRouter()
-
-  // ============================================
-  // EFFECTS
-  // ============================================
-  useEffect(() => {
-    checkAuth()
-    fetchProperties()
-  }, [filterCategory, filterType])
-
-  // ============================================
-  // AUTHENTICATION
-  // ============================================
-  const checkAuth = () => {
-    try {
-      const userDataStr = localStorage.getItem('userData')
-      
-      if (!userDataStr) {
-        router.push('/login')
-        return
-      }
-
-      const user = JSON.parse(userDataStr)
-      
-      if (user.userType !== 'admin') {
-        router.push('/')
-        return
-      }
-
-      setUserData(user)
-    } catch (error) {
-      console.error('Auth check failed:', error)
-      router.push('/login')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('userData')
-    localStorage.removeItem('token')
-    router.push('/login')
-  }
 
   // ============================================
   // DATA FETCHING
   // ============================================
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
+    if (!userData) return
+
     try {
-      let url = '/api/properties'
       const params = new URLSearchParams()
+      if (filterCategory !== 'all') params.append('category', filterCategory)
+      if (filterType !== 'all') params.append('type', filterType)
       
-      if (filterCategory !== 'all') {
-        params.append('category', filterCategory)
-      }
-      
-      if (filterType !== 'all') {
-        params.append('type', filterType)
-      }
-      
-      if (params.toString()) {
-        url += `?${params.toString()}`
-      }
-      
+      const url = `/api/properties${params.toString() ? `?${params}` : ''}`
       const response = await fetch(url)
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
       
-      const data = await response.json()
+      const data: Property[] = await response.json()
       setProperties(data)
     } catch (error) {
       console.error('Failed to fetch properties:', error)
       alert('❌ Failed to load properties. Please refresh the page.')
     }
-  }
+  }, [userData, filterCategory, filterType])
+
+  useEffect(() => {
+    fetchProperties()
+  }, [fetchProperties])
 
   // ============================================
   // FORM HANDLERS
   // ============================================
-  const handleInputChange = (
+  const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
     
-    if (name === 'type') {
-      let newCategory: PropertyFormData['category'] = formData.category
-      
-      if (value === 'sell' && !['house-and-lot', 'condominium'].includes(formData.category)) {
-        newCategory = 'house-and-lot'
-      } else if (value === 'rent' && !['short-term', 'long-term'].includes(formData.category)) {
-        newCategory = 'short-term'
-      } else if (value === 'buy' && !['pre-selling', 'ready-for-occupancy'].includes(formData.category)) {
-        newCategory = 'pre-selling'
+    setFormData(prev => {
+      if (name === 'type') {
+        const newType = value as PropertyFormData['type']
+        let newCategory = prev.category
+        
+        // Auto-adjust category based on type
+        if (newType === 'sell' && !['house-and-lot', 'condominium'].includes(prev.category)) {
+          newCategory = 'house-and-lot'
+        } else if (newType === 'rent' && !['short-term', 'long-term'].includes(prev.category)) {
+          newCategory = 'short-term'
+        } else if (newType === 'buy' && !['pre-selling', 'ready-for-occupancy'].includes(prev.category)) {
+          newCategory = 'pre-selling'
+        }
+        
+        return { ...prev, type: newType, category: newCategory }
       }
       
-      setFormData(prev => ({ 
-        ...prev, 
-        type: value as PropertyFormData['type'],
-        category: newCategory 
-      }))
-    } else if (name === 'category') {
-      setFormData(prev => ({ 
-        ...prev, 
-        category: value as PropertyFormData['category']
-      }))
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }))
-    }
-  }
+      return { ...prev, [name]: value }
+    })
+  }, [])
 
-  const isCategoryAvailable = (categoryValue: string, currentType: string) => {
-    if (currentType === 'sell') {
-      return ['house-and-lot', 'condominium'].includes(categoryValue)
-    } else if (currentType === 'rent') {
-      return ['short-term', 'long-term'].includes(categoryValue)
-    } else if (currentType === 'buy') {
-      return ['pre-selling', 'ready-for-occupancy'].includes(categoryValue)
-    }
-    return true
-  }
-
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
     try {
       const fileArray = Array.from(files)
       
+      // Validation
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
       const invalidFiles = fileArray.filter(file => !validTypes.includes(file.type))
-      
       if (invalidFiles.length > 0) {
         alert('❌ Please upload only JPG, PNG, or WebP images')
         return
@@ -242,12 +281,12 @@ export default function AdminPage() {
 
       const maxSize = 5 * 1024 * 1024
       const oversizedFiles = fileArray.filter(file => file.size > maxSize)
-      
       if (oversizedFiles.length > 0) {
         alert('❌ Each image must be less than 5MB')
         return
       }
 
+      // Convert to base64
       const readerPromises = fileArray.map(file => {
         return new Promise<string>((resolve, reject) => {
           const reader = new FileReader()
@@ -264,19 +303,33 @@ export default function AdminPage() {
       console.error('Error reading images:', error)
       alert('❌ Error processing images. Please try again.')
     }
-  }
+  }, [])
 
-  const handleSubmit = async () => {
+  const removeImage = useCallback((index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }))
+  }, [])
+
+  const resetForm = useCallback(() => {
+    setFormData(INITIAL_FORM_STATE)
+    setIsEditMode(false)
+    setEditingPropertyId(null)
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+    if (fileInput) fileInput.value = ''
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    // Validation
     if (!formData.title.trim()) {
       alert('❌ Please enter a property title')
       return
     }
-    
     if (!formData.propertyId.trim()) {
       alert('❌ Please enter a property ID')
       return
     }
-
     if (!formData.price.trim()) {
       alert('❌ Please enter a price')
       return
@@ -287,13 +340,9 @@ export default function AdminPage() {
     try {
       const payload = {
         ...formData,
-        images: formData.images.length 
-          ? formData.images 
-          : ['/property-placeholder.jpg'],
+        images: formData.images.length ? formData.images : ['/property-placeholder.jpg'],
         features: formData.features,
       }
-
-      console.log('Sending payload:', payload)
 
       const response = await fetch('/api/properties/create', {
         method: 'POST',
@@ -310,7 +359,6 @@ export default function AdminPage() {
       }
 
       const result = await response.json()
-      console.log('Server response:', result)
 
       if (response.ok) {
         alert('✅ Property added successfully!')
@@ -322,48 +370,13 @@ export default function AdminPage() {
       }
     } catch (error: any) {
       console.error('Error adding property:', error)
-      alert(`❌ Error: ${error.message || 'Network error. Please check your connection and try again.'}`)
+      alert(`❌ Error: ${error.message || 'Network error. Please try again.'}`)
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [formData, userData, fetchProperties, resetForm])
 
-  const resetForm = () => {
-    setFormData(INITIAL_FORM_STATE)
-    setIsEditMode(false)
-    setEditingPropertyId(null)
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
-    if (fileInput) fileInput.value = ''
-  } 
-  
-  const handleEdit = (property: Property) => {
-    let imagesArray: string[] = []
-    try {
-      if (Array.isArray(property.images)) {
-        imagesArray = property.images
-      } else if (typeof property.images === 'string') {
-        imagesArray = JSON.parse(property.images)
-      }
-    } catch (err) {
-      console.error('Error parsing images:', err)
-      imagesArray = []
-    }
-
-    let featuresObj: PropertyFeatures = {
-      interior: ['Modern kitchen', 'Spacious living room'],
-      amenities: ['Swimming pool', '24/7 Security'],
-      nearby: ['Schools nearby', 'Shopping malls']
-    }
-    try {
-      if (typeof property.features === 'string') {
-        featuresObj = JSON.parse(property.features)
-      } else if (property.features) {
-        featuresObj = property.features
-      }
-    } catch (err) {
-      console.error('Error parsing features:', err)
-    }
-
+  const handleEdit = useCallback((property: Property) => {
     setFormData({
       title: property.title,
       description: property.description,
@@ -379,20 +392,20 @@ export default function AdminPage() {
       parking: property.parking || '',
       yearBuilt: property.yearBuilt || '',
       propertyId: property.propertyId,
-      images: imagesArray,
-      features: featuresObj
+      images: parseImages(property.images),
+      features: parseFeatures(property.features)
     })
 
     setEditingPropertyId(property.id)
     setIsEditMode(true)
     setShowAddForm(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  }, [])
 
-  const handleDelete = async (id: string, title: string) => {
-    const confirmMessage = `Are you sure you want to delete "${title}"? This action cannot be undone.`
-    
-    if (!confirm(confirmMessage)) return
+  const handleDelete = useCallback(async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+      return
+    }
 
     try {
       const response = await fetch(`/api/properties/delete?id=${id}`, {
@@ -411,39 +424,24 @@ export default function AdminPage() {
       console.error('Error deleting property:', error)
       alert('❌ Network error. Please try again.')
     }
-  }
+  }, [userData, fetchProperties])
 
-  const toggleAddForm = () => {
+  const toggleAddForm = useCallback(() => {
     if (showAddForm) {
       resetForm()
     }
     setShowAddForm(!showAddForm)
-  }
+  }, [showAddForm, resetForm])
 
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }))
-  }
-
-  const cancelEdit = () => {
+  const cancelEdit = useCallback(() => {
     resetForm()
     setShowAddForm(false)
-  }
-  
-
-
-const toggleSidebar = () => {
-  setIsSidebarOpen(!isSidebarOpen)
-}
-
-
+  }, [resetForm])
 
   // ============================================
   // RENDER: LOADING STATE
   // ============================================
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
         <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin mb-4"></div>
@@ -452,29 +450,33 @@ const toggleSidebar = () => {
     )
   }
 
+  if (!userData) {
+    return null
+  }
+
   // ============================================
-  // RENDER: MAIN UI WITH LAYOUT
+  // RENDER: MAIN UI
   // ============================================
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
-      isOpen={isSidebarOpen}
-      onClose={() => setIsSidebarOpen(false)}
-      onToggle={() => setIsSidebarOpen(!isSidebarOpen)}  // Add this line
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-      userData={userData}
-    />
-
-    {/* Main Content Area */}
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Top Bar */}
-      <TopBar
-        onMenuClick={() => setIsSidebarOpen(true)}
-        onLogout={handleLogout}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         userData={userData}
       />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <TopBar
+          onMenuClick={() => setIsSidebarOpen(true)}
+          onLogout={logout}
+          userData={userData}
+        />
 
         {/* Main Content - Properties Management */}
         <main className="flex-1 overflow-y-auto bg-gray-50">
@@ -488,7 +490,7 @@ const toggleSidebar = () => {
             {/* Add Property Button */}
             <button
               onClick={toggleAddForm}
-              className="cursor-pointer mb-6 px-6 py-3 bg-black duration-300 hover:shadow-[0_0_20px_black] hover:shadow-black-/50 text-white rounded-lg transition font-semibold shadow-md transform hover:scale-105  flex items-center space-x-2"
+              className="cursor-pointer mb-6 px-6 py-3 bg-black duration-300 hover:shadow-[0_0_20px_black] text-white rounded-lg transition font-semibold shadow-md transform hover:scale-105 flex items-center space-x-2"
             >
               {showAddForm ? (
                 <>
@@ -768,7 +770,7 @@ const toggleSidebar = () => {
                         multiple
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                         onChange={handleImageChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-black file:text-white file:duration-300 hover:file:shadow-[0_0_20px_black] hover:file:shadow-black-/50 hover:file:scale-105 file:cursor-pointer transition"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-black file:text-white file:duration-300 hover:file:shadow-[0_0_20px_black] hover:file:scale-105 file:cursor-pointer transition"
                       />
                       <p className="text-xs text-gray-500 mt-1">
                         Accepted formats: JPG, PNG, WebP (Max 5MB per image)
@@ -806,28 +808,27 @@ const toggleSidebar = () => {
                   {/* Description */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center space-x-2">
-                      <span>📝</span>
-                      <span>Description</span>
-                    </h3>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Property Description <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        placeholder="Describe the property in detail..."
-                        required
-                        rows={5}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition"
-                      />
-                    </div>
-                  </div>
+<span>📝</span>
+<span>Description</span>
+</h3>
+<div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Property Description <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Describe the property in detail..."
+                    required
+                    rows={5}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition"
+                  />
+                </div>
+              </div>
 
-                  {/* Submit Button */}
-                  <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+              {/* Submit Button */}
+              <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
                 <button
                   onClick={cancelEdit}
                   type="button"
@@ -838,7 +839,7 @@ const toggleSidebar = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="cursor-pointer px-6 py-3 bg-black text-white rounded-lg font-semibold hover:shadow-[0_0_20px_black] hover:shadow-black-/50 transition duration-200 shadow-md hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center space-x-2"
+                  className="cursor-pointer px-6 py-3 bg-black text-white rounded-lg font-semibold hover:shadow-[0_0_20px_black] transition duration-200 shadow-md hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center space-x-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -876,7 +877,7 @@ const toggleSidebar = () => {
                 onChange={(e) => setFilterCategory(e.target.value)}
                 className="px-4 py-2 border text-black cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white shadow-sm hover:border-gray-400 transition"
               >
-                <option value="all" >All Categories</option>
+                <option value="all">All Categories</option>
                 {CATEGORY_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
@@ -984,5 +985,4 @@ const toggleSidebar = () => {
     </main>
   </div>
 </div>
-    )
-}
+)}
