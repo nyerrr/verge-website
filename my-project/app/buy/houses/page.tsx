@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import PropertyDetailsModal from '../../components/PropertyDetailsModal'
 import Link from 'next/link'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaBuilding, FaParking, FaBed, FaBath, FaCalendar } from 'react-icons/fa'
 
@@ -12,12 +13,12 @@ interface Property {
   id: number
   title: string
   price: string
-  location?: string
+  location: string  // Remove the ? to make it required
   status: string
   bedrooms: string
   bathrooms: string
   area: string
-  images?: string[]
+  images: string[]  // Remove the ? to make it required (not optional)
   image: string
   description: string
   floorLevel?: string
@@ -26,7 +27,7 @@ interface Property {
   propertyId?: string
   category?: string
   type?: string
-  features?: {
+  features: {  // Remove the ? to make it required
     interior?: string[]
     amenities?: string[]
     nearby?: string[]
@@ -60,13 +61,14 @@ const RulerIcon = ({ className = "w-5 h-5" }) => (
 export default function Condo() {
   const [properties, setProperties] = useState<Property[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
 
   // ============================================
   // FETCH DATA - Filter by category 'pre-selling'
   // ============================================
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties?category=ready-for-occupancy')
+      const response = await fetch('/api/properties?category=pre-selling&type=buy')
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -85,6 +87,58 @@ export default function Condo() {
   useEffect(() => {
     fetchProperties()
   }, [])
+
+  const parsePropertyData = (property: Property): Property => {
+  let imagesArray: string[] = []
+  let featuresObj: {
+    interior?: string[]
+    amenities?: string[]
+    nearby?: string[]
+  } = {
+    interior: ['Modern kitchen', 'Spacious living room'],
+    amenities: ['Swimming pool', '24/7 Security'],
+    nearby: ['Schools nearby', 'Shopping malls']
+  }
+
+  // Parse images
+  try {
+    if (Array.isArray(property.images)) {
+      imagesArray = property.images
+    } else if (typeof property.images === "string") {
+      imagesArray = JSON.parse(property.images)
+    }
+  } catch {
+    imagesArray = [property.image || "/property-placeholder.jpg"]
+  }
+
+  if (imagesArray.length === 0) {
+    imagesArray = [property.image || "/property-placeholder.jpg"]
+  }
+
+  // Parse features
+  try {
+    if (typeof property.features === "string") {
+      const parsed = JSON.parse(property.features)
+      featuresObj = parsed
+    } else if (property.features && typeof property.features === 'object') {
+      featuresObj = property.features as {
+        interior?: string[]
+        amenities?: string[]
+        nearby?: string[]
+      }
+    }
+  } catch {
+    // Use default
+  }
+
+  return {
+    ...property,
+    images: imagesArray,
+    features: featuresObj
+  }
+}
+
+ 
 
   // ============================================
   // RENDER PROPERTY CARD
@@ -173,8 +227,14 @@ export default function Condo() {
           {/* Buttons */}
           <div className="flex gap-2">
             <Link href={`/properties/${property.id}`} className="flex-1">
-              <button className="w-full bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] hover:scale-105 text-sm shadow-sm">
-                View Details
+              <button 
+              onClick={(e) => {
+              e.preventDefault()
+              setSelectedProperty(parsePropertyData(property))
+              }}
+              className="w-full bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] hover:scale-105 text-sm shadow-sm"
+              >
+              View Details
               </button>
             </Link>
             <Link href="/contact">
@@ -359,6 +419,13 @@ export default function Condo() {
           </div>
         </div>
       </footer>
+      {/* Property Details Modal */}
+{selectedProperty && (
+  <PropertyDetailsModal
+    property={selectedProperty}
+    onClose={() => setSelectedProperty(null)}
+  />
+)}
     </div>
   )
 }

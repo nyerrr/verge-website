@@ -338,43 +338,45 @@ export default function AdminPage() {
     setIsSubmitting(true)
 
     try {
-      const payload = {
-        ...formData,
-        images: formData.images.length ? formData.images : ['/property-placeholder.jpg'],
-        features: formData.features,
-      }
-
-      const response = await fetch('/api/properties/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'user-data': JSON.stringify(userData)
-        },
-        body: JSON.stringify(payload)
-      })
-
-      const contentType = response.headers.get('content-type')
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server returned non-JSON response')
-      }
-
-      const result = await response.json()
-
-      if (response.ok) {
-        alert('✅ Property added successfully!')
-        setShowAddForm(false)
-        await fetchProperties()
-        resetForm()
-      } else {
-        alert(`❌ Error: ${result.error || 'Failed to add property'}`)
-      }
-    } catch (error: any) {
-      console.error('Error adding property:', error)
-      alert(`❌ Error: ${error.message || 'Network error. Please try again.'}`)
-    } finally {
-      setIsSubmitting(false)
+    const imagesToSend = formData.images.length ? formData.images : ['/property-placeholder.jpg']
+    
+    const payload = {
+      ...formData,
+      images: JSON.stringify(imagesToSend),      
+      features: JSON.stringify(formData.features), 
     }
-  }, [formData, userData, fetchProperties, resetForm])
+
+    const response = await fetch('/api/properties/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'user-data': JSON.stringify(userData)
+      },
+      body: JSON.stringify(payload)
+    })
+
+    const contentType = response.headers.get('content-type')
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server returned non-JSON response')
+    }
+
+    const result = await response.json()
+
+    if (response.ok) {
+      alert('✅ Property added successfully!')
+      setShowAddForm(false)
+      await fetchProperties()
+      resetForm()
+    } else {
+      alert(`❌ Error: ${result.error || 'Failed to add property'}`)
+    }
+  } catch (error: any) {
+    console.error('Error adding property:', error)
+    alert(`❌ Error: ${error.message || 'Network error. Please try again.'}`)
+  } finally {
+    setIsSubmitting(false)
+  }
+}, [formData, userData, fetchProperties, resetForm])
 
   const handleEdit = useCallback((property: Property) => {
     setFormData({

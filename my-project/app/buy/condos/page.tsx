@@ -58,7 +58,7 @@ export default function Lot() {
   // ============================================
   const fetchProperties = async () => {
     try {
-      const response = await fetch('/api/properties?category=pre-selling&type=buy')
+      const response = await fetch('/api/properties?category=ready-for-occupancy&type=buy')
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -154,7 +154,7 @@ export default function Lot() {
             {/* Eyebrow label */}
             <div className="mb-4 sm:mb-6">
               <span className="inline-block text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-gray-200 bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-md border border-white/20 shadow-lg">
-                House and Lot
+                Ready For Occupancy
               </span>
             </div>
             

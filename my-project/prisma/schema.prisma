@@ -79,8 +79,10 @@ model Property {
   parking     String?
   yearBuilt   String?
   propertyId  String   @unique
+  image       String
   images      String   // Changed from Json to String for SQLite
   features    String   // Changed from Json to String for SQLite
+  createdBy   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
