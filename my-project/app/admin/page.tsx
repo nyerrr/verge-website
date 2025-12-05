@@ -405,28 +405,33 @@ export default function AdminPage() {
   }, [])
 
   const handleDelete = useCallback(async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
-      return
-    }
+  if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+    return
+  }
 
-    try {
-      const response = await fetch(`/api/properties/delete?id=${id}`, {
-        method: 'DELETE',
-        headers: { 'user-data': JSON.stringify(userData) }
-      })
+  try {
+    console.log('Attempting to delete property with id:', id)
+    
+    const response = await fetch(`/api/properties/delete?id=${id}`, {
+      method: 'DELETE',
+      headers: { 'user-data': JSON.stringify(userData) }
+    })
 
-      if (response.ok) {
-        alert('✅ Property deleted successfully')
-        await fetchProperties()
-      } else {
-        const result = await response.json()
-        alert(`❌ Failed to delete: ${result.error || 'Unknown error'}`)
-      }
-    } catch (error) {
-      console.error('Error deleting property:', error)
-      alert('❌ Network error. Please try again.')
+    console.log('Response status:', response.status)
+    const result = await response.json()
+    console.log('Response data:', result)
+
+    if (response.ok) {
+      alert('✅ Property deleted successfully')
+      await fetchProperties()
+    } else {
+      alert(`❌ Failed to delete: ${result.error || 'Unknown error'}`)
     }
-  }, [userData, fetchProperties])
+  } catch (error) {
+    console.error('Error deleting property:', error)
+    alert('❌ Network error. Please try again.')
+  }
+}, [userData, fetchProperties])
 
   const toggleAddForm = useCallback(() => {
     if (showAddForm) {

@@ -23,7 +23,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.property.delete({
-      where: { id: Number(id) }
+      where: { id: id }
     })
 
     return NextResponse.json({ success: true, message: 'Property deleted successfully' })
