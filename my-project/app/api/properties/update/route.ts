@@ -7,30 +7,8 @@ const prisma = new PrismaClient();
 
 export async function PUT(request: NextRequest) {
   try {
-    // Get property ID from query params
-    const { searchParams } = new URL(request.url);
-    const propertyIdParam = searchParams.get('id');
-
-    if (!propertyIdParam) {
-      return NextResponse.json(
-        { error: "Property ID is required" },
-        { status: 400 }
-      );
-    }
-
-    // Convert string ID to number
-    const propertyId = parseInt(propertyIdParam, 10);
-    
-    if (isNaN(propertyId)) {
-      return NextResponse.json(
-        { error: "Invalid property ID" },
-        { status: 400 }
-      );
-    }
-
-    // Parse request body
     const data = await request.json();
-    console.log('Updating property:', propertyId, data);
+    console.log('Update request received:', data);
 
     // --- Authentication/Authorization ---
     const userDataHeader = request.headers.get("user-data");
@@ -44,16 +22,16 @@ export async function PUT(request: NextRequest) {
     }
 
     // --- Validate required fields ---
-    if (!data.title || !data.propertyId || !data.price) {
+    if (!data.id) {
       return NextResponse.json(
-        { error: "Missing required fields: title, propertyId, or price" },
+        { error: "Property ID required for update" },
         { status: 400 }
       );
     }
 
     // --- Check if property exists ---
     const existingProperty = await prisma.property.findUnique({
-      where: { id: propertyId }
+      where: { id: data.id } // Use string ID from body
     });
 
     if (!existingProperty) {
@@ -63,9 +41,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // --- Normalize category/type (keep as lowercase) ---
-    const normalizedCategory = data.category?.toLowerCase() || null;
-    const normalizedType = data.type?.toLowerCase() || null;
+    // --- Normalize category/type ---
+    const normalizedCategory = data.category?.toLowerCase() || existingProperty.category;
+    const normalizedType = data.type?.toLowerCase() || existingProperty.type;
 
     // --- Handle images ---
     let imagesArray: string[] = [];
@@ -79,7 +57,17 @@ export async function PUT(request: NextRequest) {
         }
       } catch (err) {
         console.error('Error parsing images:', err);
-        imagesArray = ['/property-placeholder.jpg'];
+        return NextResponse.json(
+          { error: "Invalid images format" },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Keep existing images if none provided
+      try {
+        imagesArray = JSON.parse(existingProperty.images || '[]');
+      } catch {
+        imagesArray = [existingProperty.image || '/property-placeholder.jpg'];
       }
     }
 
@@ -91,7 +79,7 @@ export async function PUT(request: NextRequest) {
     const imagesJson = JSON.stringify(imagesArray);
 
     // --- Handle features ---
-    let featuresJson = "{}";
+    let featuresJson = existingProperty.features || "{}";
     if (data.features) {
       try {
         featuresJson = typeof data.features === 'string' 
@@ -99,34 +87,58 @@ export async function PUT(request: NextRequest) {
           : JSON.stringify(data.features);
       } catch (err) {
         console.error('Error parsing features:', err);
+        return NextResponse.json(
+          { error: "Invalid features format" },
+          { status: 400 }
+        );
       }
     }
 
-    console.log('Updating with:', {
-      category: normalizedCategory,
-      type: normalizedType,
-      images: imagesJson,
-      mainImage
-    });
+    // --- Convert numeric fields to strings if needed ---
+    const bedroomsValue = data.bedrooms !== undefined 
+      ? String(data.bedrooms) 
+      : existingProperty.bedrooms;
+    
+    const bathroomsValue = data.bathrooms !== undefined 
+      ? String(data.bathrooms) 
+      : existingProperty.bathrooms;
+    
+    const areaValue = data.area !== undefined 
+      ? String(data.area) 
+      : existingProperty.area;
+    
+    const floorLevelValue = data.floorLevel !== undefined 
+      ? (data.floorLevel !== null ? String(data.floorLevel) : null)
+      : existingProperty.floorLevel;
+    
+    const parkingValue = data.parking !== undefined 
+      ? (data.parking !== null ? String(data.parking) : null)
+      : existingProperty.parking;
+    
+    const yearBuiltValue = data.yearBuilt !== undefined 
+      ? (data.yearBuilt !== null ? String(data.yearBuilt) : null)
+      : existingProperty.yearBuilt;
+
+    console.log('Updating property with id:', data.id);
 
     // --- Update property in database ---
     const updatedProperty = await prisma.property.update({
-      where: { id: propertyId },
+      where: { id: data.id }, // Use string ID
       data: {
         title: data.title,
-        description: data.description || '',
+        description: data.description ?? existingProperty.description,
         price: data.price,
-        location: data.location || '',
+        location: data.location ?? existingProperty.location,
         category: normalizedCategory,
         type: normalizedType,
-        status: data.status || 'Available',
-        bedrooms: data.bedrooms || '',
-        bathrooms: data.bathrooms || '',
-        area: data.area || '',
-        floorLevel: data.floorLevel || null,
-        parking: data.parking || null,
-        yearBuilt: data.yearBuilt || null,
-        propertyId: data.propertyId,
+        status: data.status ?? existingProperty.status,
+        bedrooms: bedroomsValue,
+        bathrooms: bathroomsValue,
+        area: areaValue,
+        floorLevel: floorLevelValue,
+        parking: parkingValue,
+        yearBuilt: yearBuiltValue,
+        propertyId: data.propertyId ?? existingProperty.propertyId,
         image: mainImage,
         images: imagesJson,
         features: featuresJson,
@@ -135,8 +147,9 @@ export async function PUT(request: NextRequest) {
 
     console.log('Property updated successfully:', updatedProperty.id);
 
-    // --- Revalidate property listing pages ---
+    // --- Revalidate pages ---
     revalidatePath("/properties");
+    revalidatePath(`/properties/${data.id}`);
     revalidatePath("/admin");
 
     return NextResponse.json({
@@ -156,7 +169,6 @@ export async function PUT(request: NextRequest) {
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
-} 
+  // ✅ REMOVED the finally block with prisma.$disconnect()
+}

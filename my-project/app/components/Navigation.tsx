@@ -142,184 +142,184 @@ export default function Navigation() {
   return (
     <>
       <header className={`${poppins.className} bg-white shadow-xl sticky top-0 left-0 right-0 z-50 animate-fade-in-up`}>
-        <div className="container mx-auto px-3 sm:px-4 lg:px-6">
-          <div className="flex items-center justify-between min-h-10 sm:min-h-11">
-            {/* Logo */}
-            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
-              <Link href="/" aria-label="Home" className="shrink-0">
-                <Image
-                  src="/Untitled-1.png"
-                  alt="Logo"
-                  width={180}
-                  height={160}
-                  priority
-                  className="w-auto h-14 sm:h-16 md:h-19 lg:h-20 xl:h-22"
-                />
-              </Link>
+       
 
-              {/* Desktop Navigation */}
-              <nav className="hidden lg:flex lg:space-x-2 xl:space-x-4 text-black items-center text-sm xl:text-base">
-                {/* Regular Nav Items */}
-                {navItems.map(item => (
+      <div className="flex items-center justify-between min-h-10 sm:min-h-11 w-full">
+      {/* Left Side - Logo + Navigation */}
+        <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1">
+        {/* Logo */}
+        <Link href="/" aria-label="Home" className="shrink-0">
+          <Image
+          src="/Untitled-1.png"
+          alt="Logo"
+          width={180}
+          height={160}
+          priority
+          className="w-auto h-14 sm:h-16 md:h-19 lg:h-20 xl:h-22"
+          />
+        </Link>
+
+        {/* Desktop Navigation - Always on the left */}
+        <nav className="hidden lg:flex lg:space-x-2 xl:space-x-4 text-black items-center text-sm xl:text-base">
+        {/* Regular Nav Items */}
+          {navItems.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`px-2 xl:px-3 py-2 rounded leading-none hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
+                pathname === item.href ? 'border-b-2 border-black font-bold' : ''
+              }`}
+              >
+              <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+              </svg>
+              <span className="hidden lg:inline">{item.label}</span>
+            </Link>
+          ))}
+
+          {/* Dropdown Menus */}
+          {Object.entries(dropdownMenus).map(([key, menu]) => (
+            <div key={key} className="relative group">
+              <button
+              className={`px-2 xl:px-3 py-2 leading-none rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
+              pathname.startsWith(`/${key}`) ? 'border-b-2 border-black font-bold' : ''
+              }`}
+            >
+              <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menu.icon} />
+              </svg>
+              <span className="hidden lg:inline">{menu.label}</span>
+              <svg className="w-3 h-3 xl:w-4 xl:h-4 group-hover:rotate-180 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              </button>
+              <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded shadow-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                {menu.items.map(item => (
                   <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`px-2 xl:px-3 py-2 rounded leading-none hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
-                      pathname === item.href ? 'border-b-2 border-black font-bold' : ''
-                    }`}
-                  >
-                    <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-                    </svg>
-                    <span className="hidden lg:inline">{item.label}</span>
-                  </Link>
-                ))}
-
-                {/* Dropdown Menus */}
-                {Object.entries(dropdownMenus).map(([key, menu]) => (
-                  <div key={key} className="relative group">
-                    <button
-                      className={`px-2 xl:px-3 py-2 leading-none rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
-                        pathname.startsWith(`/${key}`) ? 'border-b-2 border-black font-bold' : ''
-                      }`}
-                    >
-                      <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menu.icon} />
-                      </svg>
-                      <span className="hidden lg:inline">{menu.label}</span>
-                      <svg className="w-3 h-3 xl:w-4 xl:h-4 group-hover:rotate-180 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded shadow-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      {menu.items.map(item => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={`text-sm block px-4 py-2 hover:bg-gray-100 ${
-                            pathname === item.href ? 'font-bold text-gray-900 bg-gray-100' : ''
-                          }`}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Contact Link */}
-                <Link
-                  href="/contact"
-                  className={`px-2 xl:px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
-                    pathname === '/contact' ? 'border-b-2 border-black font-bold' : ''
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm block px-4 py-2 hover:bg-gray-100 ${
+                    pathname === item.href ? 'font-bold text-gray-900 bg-gray-100' : ''
                   }`}
                 >
-                  <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span className="hidden lg:inline">Contact Us</span>
+                  {item.label}
                 </Link>
-              </nav>
-            </div>
-
-            {/* Right Side */}
-            <div className="flex text-black items-center gap-2 sm:gap-3">
-              {/* Search Bar - appears after scrolling */}
-              {pathname !== '/' && (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    const query = (e.currentTarget.search.value as string).trim()
-                    if (query) {
-                      router.push(`/search?query=${encodeURIComponent(query)}`)
-                    }
-                  }}
-                  className="relative shrink-0 w-40 sm:w-56 md:w-64 lg:w-72 xl:w-80"
-                >
-                  <input
-                    type="text"
-                    name="search"
-                    placeholder="Search..."
-                    className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-sm md:text-base"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
-                  >
-                    <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </button>
-                </form>
-              )}
-
-              {/* Desktop Auth Buttons - Show/Hide based on login status */}
-              {isLoggedIn ? (
-                <div className="hidden lg:flex items-center gap-3">
-              
-                  {userType === 'admin' && (
-                    <Link
-                      href="/admin"
-                      className="cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] hover:shadow-black-/50 transition duration-300 whitespace-nowrap"
-                    >
-                      Admin
-                    </Link>
-                  )}
-                  <button
-                    onClick={handleLogout}
-                    className="cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
-                  >
-                    Log in / Sign up
-                  </Link>
-                </>
-              )}
-
-              {/* Mobile Menu Button */}
-              <button
-                ref={menuButtonRef}
-                type="button"
-                aria-label={open ? 'Close menu' : 'Open menu'}
-                aria-expanded={open}
-                onClick={() => setOpen(!open)}
-                className="lg:hidden p-1.5 sm:p-2 rounded bg-gray-100 hover:bg-gray-200 shrink-0"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 sm:h-6 sm:w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  {open ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
+              ))}
             </div>
           </div>
-        </div>
+        ))}
+
+      {/* Contact Link */}
+      <Link
+        href="/contact"
+        className={`px-2 xl:px-3 py-2 rounded hover:bg-gray-100 flex items-center gap-1 xl:gap-2 whitespace-nowrap ${
+          pathname === '/contact' ? 'border-b-2 border-black font-bold' : ''
+        }`}
+      >
+        <svg className="w-3 h-3 xl:w-4 xl:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span className="hidden lg:inline">Contact Us</span>
+      </Link>
+    </nav>
+  </div>
+
+  {/* Right Side - Search + Auth Buttons (Always on the right) */}
+  <div className="flex text-black items-center gap-2 sm:gap-3 shrink-0 ml-auto">
+    {/* Search Bar - appears after scrolling */}
+    {pathname !== '/' && (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          const query = (e.currentTarget.search.value as string).trim()
+          if (query) {
+            router.push(`/search?query=${encodeURIComponent(query)}`)
+          }
+        }}
+        className="relative shrink-0 w-40 sm:w-56 md:w-64 lg:w-72 xl:w-80"
+      >
+        <input
+          type="text"
+          name="search"
+          placeholder="Search..."
+          className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-sm md:text-base"
+        />
+        <button
+          type="submit"
+          className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+        >
+          <svg
+            className="w-4 h-4 sm:w-5 sm:h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </button>
+      </form>
+    )}
+
+    {/* Desktop Auth Buttons - Show/Hide based on login status */}
+    {isLoggedIn ? (
+      <div className="hidden lg:flex items-center gap-3">
+        {userType === 'admin' && (
+          <Link
+            href="/admin"
+            className="cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] hover:shadow-black-/50 transition duration-300 whitespace-nowrap"
+          >
+            Admin
+          </Link>
+        )}
+        <button
+          onClick={handleLogout}
+          className="cursor-pointer text-xs sm:text-sm md:text-base px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition duration-300 whitespace-nowrap"
+        >
+          Logout
+        </button>
+      </div>
+    ) : (
+      <>
+        <Link
+          href="/login"
+          className="hidden lg:block text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-black text-white rounded-full hover:shadow-[0_0_20px_black] transition duration-300 whitespace-nowrap"
+        >
+          Log in / Sign up
+        </Link>
+      </>
+    )}
+
+    {/* Mobile Menu Button */}
+    <button
+      ref={menuButtonRef}
+      type="button"
+      aria-label={open ? 'Close menu' : 'Open menu'}
+      aria-expanded={open}
+      onClick={() => setOpen(!open)}
+      className="lg:hidden p-1.5 sm:p-2 rounded bg-gray-100 hover:bg-gray-200 shrink-0"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 sm:h-6 sm:w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        {open ? (
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        ) : (
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        )}
+      </svg>
+    </button>
+  </div>
+</div>
       </header>
 
       {/* Mobile Menu Backdrop */}
