@@ -228,7 +228,7 @@ export default function Condominium() {
                   className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
                 >
                   {/* Image */}
-                  <div className="relative h-52 sm:h-60 md:h-64 overflow-hidden">
+                  <div className="cursor-pointer relative h-52 sm:h-60 md:h-64 overflow-hidden">
                     <Image
                       src={mainImage}
                       alt={property.title}

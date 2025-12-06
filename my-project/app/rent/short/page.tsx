@@ -210,9 +210,9 @@ const fetchProperties = async () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
               Flexible Short-Term Rentals
             </h1>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-3xl text-gray-200 leading-relaxed text-justify">
-              Comfortable, fully-furnished units ready for short stays. Whether you need a place for a night, a week, or a month, we have flexible options designed for travelers, business professionals, and anyone seeking temporary accommodations with all the comforts of home.
-            </p>
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl text-gray-200 leading-relaxed">
+  Comfortable, fully-furnished units ready for short stays. Whether you need a place for a night, a week, or a month, we have flexible options designed for travelers, business professionals, and anyone seeking temporary accommodations with all the comforts of home.
+</p>
           </div>
         </section>
 
@@ -241,7 +241,7 @@ const fetchProperties = async () => {
               <p className="text-sm text-gray-400 mt-2">Check back soon for new listings.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+            <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
               {properties.map((property) => {
                 let imagesArray: string[] = []
                 if (property.images) {
@@ -254,7 +254,7 @@ const fetchProperties = async () => {
                 return (
                   <article
                     key={property.id}
-                    className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                    className="group cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                   >
                     <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
                       <Image

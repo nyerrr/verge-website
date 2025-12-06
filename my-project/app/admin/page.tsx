@@ -825,10 +825,10 @@ const fetchProperties = useCallback(async () => {
                   {/* Description */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center space-x-2">
-<span>📝</span>
-<span>Description</span>
-</h3>
-<div>
+                      <span>📝</span>
+                      <span>Description</span>
+                    </h3>
+                  <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Property Description <span className="text-red-500">*</span>
                   </label>
@@ -979,13 +979,13 @@ const fetchProperties = useCallback(async () => {
                         <div className="flex gap-2 justify-center">
                           <button
                             onClick={() => handleEdit(property)}
-                            className="px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm hover:shadow-md"
+                            className="cursor-pointer px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm hover:shadow-md"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(property.id, property.title)}
-                            className="px-3 py-1.5 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-medium shadow-sm hover:shadow-md"
+                            className="cursor-pointer px-3 py-1.5 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-medium shadow-sm hover:shadow-md"
                           >
                             Delete
                           </button>

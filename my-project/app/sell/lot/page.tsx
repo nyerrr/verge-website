@@ -240,93 +240,93 @@ export default function Lot() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-  {Properties.map((Property) => {
-    // Ensure images array exists
-    let imagesArray: string[] = []
-    if (Property.images) {
-      imagesArray = Array.isArray(Property.images)
-        ? Property.images
-        : JSON.parse(Property.images)
-    }
-    const mainImage = imagesArray[0] || "/property-placeholder.jpg"
+              {Properties.map((Property) => {
+              // Ensure images array exists
+                let imagesArray: string[] = []
+                if (Property.images) {
+                  imagesArray = Array.isArray(Property.images)
+                  ? Property.images
+                  : JSON.parse(Property.images)
+              }
+              const mainImage = imagesArray[0] || "/property-placeholder.jpg"
 
-    return (
-      <div
-        key={Property.id}
-        className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
-      >
-        <div className="relative h-52 sm:h-60 md:h-64 overflow-hidden">
-          <Image
-            src={mainImage}
-            alt={Property.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-700"
-          />
-          <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
-            {Property.status}
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/60 to-transparent p-4">
-            <p className="text-white text-2xl sm:text-3xl font-bold">{Property.price}</p>
-          </div>
+            return (
+              <div
+                key={Property.id}
+                className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+              >
+                <div className=" cursor-pointer relative h-52 sm:h-60 md:h-64 overflow-hidden">
+                  <Image
+                    src={mainImage}
+                    alt={Property.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                    {Property.status}
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/60 to-transparent p-4">
+                    <p className="text-white text-2xl sm:text-3xl font-bold">{Property.price}</p>
+                  </div>
+                </div>
+
+                <div className="p-5 sm:p-6 bg-white">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 group-hover:text-gray-700 transition-colors">
+                    {Property.title}
+                  </h3>
+
+                  <div className="grid grid-cols-3 gap-3 mb-5 pb-5 border-b border-gray-100">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <FaBed className="text-gray-700 text-lg" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Bedrooms</p>
+                        <p className="text-sm font-bold text-gray-900">{Property.bedrooms}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <FaBath className="text-gray-700 text-lg" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Bathrooms</p>
+                        <p className="text-sm font-bold text-gray-900">{Property.bathrooms}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <FaRulerCombined className="text-gray-700 text-lg" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Area</p>
+                        <p className="text-sm font-bold text-gray-900">{Property.area}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
+                    {Property.description}
+                  </p>
+
+                  <div className="flex gap-2 w-full">
+                    <button
+                      onClick={() => handleProtectedAction('view', Property)}
+                      className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50"
+                    >
+                      View Details
+                    </button>
+                    <Link href="/contact">
+                      <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
+                        Contact
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
-
-        <div className="p-5 sm:p-6 bg-white">
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 group-hover:text-gray-700 transition-colors">
-            {Property.title}
-          </h3>
-
-          <div className="grid grid-cols-3 gap-3 mb-5 pb-5 border-b border-gray-100">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <FaBed className="text-gray-700 text-lg" />
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-gray-500">Bedrooms</p>
-                <p className="text-sm font-bold text-gray-900">{Property.bedrooms}</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <FaBath className="text-gray-700 text-lg" />
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-gray-500">Bathrooms</p>
-                <p className="text-sm font-bold text-gray-900">{Property.bathrooms}</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <FaRulerCombined className="text-gray-700 text-lg" />
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-gray-500">Area</p>
-                <p className="text-sm font-bold text-gray-900">{Property.area}</p>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
-            {Property.description}
-          </p>
-
-          <div className="flex gap-2 w-full">
-            <button
-              onClick={() => handleProtectedAction('view', Property)}
-              className="cursor-pointer flex-1 bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] text-sm shadow-sm hover:shadow-black-/50"
-            >
-              View Details
-            </button>
-            <Link href="/contact">
-              <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
-                Contact
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  })}
-</div>
           )}
           {/* END: Combined and Corrected Property List Rendering */}
         </div>

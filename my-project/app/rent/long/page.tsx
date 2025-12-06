@@ -218,7 +218,7 @@ useEffect(() => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
               Your Home for the Months Ahead
             </h1>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-3xl text-gray-200 leading-relaxed text-justify">
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl text-gray-200 leading-relaxed">
               Spacious and fully-furnished units designed for long-term comfort. Ideal for students, professionals, or anyone looking for a safe and convenient place to stay. Flexible monthly lease options with secure amenities and all the essentials for everyday living.
             </p>
           </div>
@@ -264,7 +264,7 @@ useEffect(() => {
                     key={property.id}
                     className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                   >
-                    <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                    <div className="cursor-pointer relative h-48 sm:h-56 md:h-64 overflow-hidden">
                       <Image
                         src={mainImage}
                         alt={property.title}
