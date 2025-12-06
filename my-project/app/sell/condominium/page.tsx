@@ -54,22 +54,25 @@ export default function Condominium() {
   const router = useRouter()
 
   const fetchProperties = async () => {
-    try {
-      const response = await fetch('/api/properties?category=condominium&type=sell');
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setPropertiesData(data);
-    } catch (error) {
-      console.error('Failed to fetch properties:', error);
-      setPropertiesData([]);
-    } finally {
-      setIsLoadingProperties(false);
+  try {
+    const response = await fetch('/api/properties?category=condominium&type=sell');
+    
+    // Check if the response is OK before parsing
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
+    const data = await response.json();
+    
+    // ✅ FIXED: Extract the properties array from the response object
+    setPropertiesData(data.properties || []);
+  } catch (error) {
+    console.error('Failed to fetch properties:', error);
+    setPropertiesData([]); // Ensure state is an empty array on failure
+  } finally {
+    setIsLoadingProperties(false);
   }
+};
 
   useEffect(() => {
     fetchProperties();

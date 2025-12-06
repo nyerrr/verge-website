@@ -1,46 +1,53 @@
 // app/api/properties/route.ts
-
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-// 🚀 Setting to disable Next.js data cache for this endpoint.
-export const dynamic = 'force-dynamic'; 
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// GET - Fetch properties with optional filtering
 export async function GET(request: NextRequest) {
   try {
+    // Get query parameters for filtering
     const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    const type = searchParams.get('type');
 
-    // Normalize query parameters to handle casing consistently
-    const category = searchParams.get('category')?.toLowerCase();
-    const type = searchParams.get('type')?.toLowerCase();
+    console.log('Fetching properties with filters:', { category, type });
 
-    // 🏗️ Build the WHERE clause for Prisma
-    const where: any = {};
-    if (category) where.category = category;
-    if (type) where.type = type;
+    // Build the where clause based on filters
+    const whereClause: any = {};
+    
+    if (category && category !== 'all') {
+      whereClause.category = category.toLowerCase();
+    }
+    
+    if (type && type !== 'all') {
+      whereClause.type = type.toLowerCase();
+    }
 
-    // Fetch properties from the database
     const properties = await prisma.property.findMany({
-      where,
-      orderBy: { createdAt: 'desc' }, // Latest properties first
+      where: whereClause,
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
-    // ⚙️ Safely parse JSON fields for client consumption
-    const parsedProperties = properties.map(prop => ({
-      ...prop,
-      // Convert JSON strings back to JavaScript array/object, defaulting to empty structures
-      images: prop.images ? JSON.parse(prop.images) : [],
-      features: prop.features ? JSON.parse(prop.features) : {},
-    }));
+    console.log(`Found ${properties.length} properties`);
 
-    return NextResponse.json(parsedProperties);
-    
+    return NextResponse.json({
+      success: true,
+      properties: properties
+    }, { status: 200 });
+
   } catch (error: any) {
-    console.error('Get properties error:', error);
+    console.error("Fetch properties error:", error);
+    
     return NextResponse.json(
-      { error: 'Failed to fetch properties' },
+      { 
+        success: false,
+        error: error.message || "Failed to fetch properties",
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     );
   }

@@ -98,7 +98,7 @@ export default function Contact() {
               />
             </div>
             <button 
-              type="submit"
+              type="submit" 
               className="w-full cursor-pointer text-white border border-black bg-black rounded-2xl py-2.5 sm:py-3 px-5 text-sm sm:text-base transition hover:shadow-[0_0_20px_black] hover:shadow-black-/50 duration-300 hover:scale-105"
             >
               Submit

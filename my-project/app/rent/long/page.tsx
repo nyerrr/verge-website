@@ -93,51 +93,52 @@ const UtensilsIcon = ({ className = "w-5 h-5" }) => (
 
 export default function LongTermRental() {
   
-  // STATE MANAGEMENT
- 
-  const [scrollY, setScrollY] = useState(0)
-  const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
-  const [Properties, setPropertiesData] = useState<Property[]>([])
-  const [isLoadingProperties, setIsLoadingProperties] = useState(true)
+  // Replace lines 117-159 with this:
 
-  // DATA FETCHING
- 
-  const fetchProperties = async () => {
-    try {
-      const response = await fetch('/api/properties?category=long-term&type=rent')
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      setPropertiesData(data)
-    } catch (error) {
-      console.error('Failed to fetch properties:', error)
-      setPropertiesData([])
-    } finally {
-      setIsLoadingProperties(false)
+// STATE MANAGEMENT
+const [scrollY, setScrollY] = useState(0)
+const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
+const [properties, setProperties] = useState<Property[]>([])
+const [isLoading, setIsLoading] = useState(true)
+
+// DATA FETCHING
+const fetchProperties = async () => {
+  try {
+    const response = await fetch('/api/properties?category=long-term&type=rent')
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
+
+    const data = await response.json()
+    
+    // ✅ Extract the properties array from the response object
+    setProperties(data.properties || [])
+  } catch (error) {
+    console.error('Failed to fetch long-term rental properties:', error)
+    setProperties([])
+  } finally {
+    setIsLoading(false) // ✅ Stop loading
   }
+}
 
- // EFFECTS
-  
-  useEffect(() => {
-    fetchProperties()
-  }, [])
+// EFFECTS
+useEffect(() => {
+  fetchProperties()
+}, [])
 
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+useEffect(() => {
+  const handleScroll = () => setScrollY(window.scrollY)
+  window.addEventListener("scroll", handleScroll, { passive: true })
+  return () => window.removeEventListener("scroll", handleScroll)
+}, [])
 
-  useEffect(() => {
-    document.body.style.overflow = selectedProperty ? "hidden" : "auto"
-    return () => {
-      document.body.style.overflow = "auto"
-    }
-  }, [selectedProperty])
+useEffect(() => {
+  document.body.style.overflow = selectedProperty ? "hidden" : "auto"
+  return () => {
+    document.body.style.overflow = "auto"
+  }
+}, [selectedProperty])
 
  
   // HANDLERS
@@ -231,25 +232,25 @@ export default function LongTermRental() {
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Available Units</h2>
             <p className="text-gray-600 text-base md:text-lg">
-              Choose from fully-furnished units perfect for monthly stays. <span className="font-semibold">{Properties.length}</span> cozy and secure options for your long-term comfort.
+              Choose from fully-furnished units perfect for monthly stays. <span className="font-semibold">{properties.length}</span> cozy and secure options for your long-term comfort.
             </p>
             <div className="mt-6 w-24 h-1 bg-linear-to-r from-gray-700 to-gray-900 mx-auto rounded-full" />
           </div>
 
           {/* Properties Grid with Loading States */}
-          {isLoadingProperties ? (
+          {isLoading ? (
             <div className="text-center py-12">
               <div className="inline-block w-12 h-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
               <p className="text-gray-600 mt-4">Loading properties...</p>
             </div>
-          ) : Properties.length === 0 ? (
+          ) : properties.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-2xl shadow-md p-8">
               <p className="text-gray-600 text-lg">No long-term rental properties available yet.</p>
               <p className="text-sm text-gray-400 mt-2">Check back soon for new listings.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-              {Properties.map((property) => {
+              {properties.map((property) => {
                 let imagesArray: string[] = []
                 if (property.images) {
                   imagesArray = Array.isArray(property.images)

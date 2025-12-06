@@ -48,7 +48,7 @@ interface ModalProperty extends Property {
   images: string[]
 }
 
-export default function Lot() {
+export default function Condo() {
   const [properties, setProperties] = useState<Property[]>([])
   const [selectedProperty, setSelectedProperty] = useState<ModalProperty | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -56,23 +56,27 @@ export default function Lot() {
   // ============================================
   // FETCH DATA - Filter by category 'house-and-lot' and type 'sell'
   // ============================================
-  const fetchProperties = async () => {
-    try {
-      const response = await fetch('/api/properties?category=ready-for-occupancy&type=buy')
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+  
 
-      const data = await response.json()
-      setProperties(data)
-    } catch (error) {
-      console.error('Failed to fetch house and lot properties:', error)
-      setProperties([])
-    } finally {
-      setIsLoading(false)
+const fetchProperties = async () => {
+  try {
+    const response = await fetch('/api/properties?category=ready-for-occupancy&type=buy')
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
+
+    const data = await response.json()
+    
+    // ✅ FIXED: Extract the properties array from the response object
+    setProperties(data.properties || [])
+  } catch (error) {
+    console.error('Failed to fetch pre-selling properties:', error)
+    setProperties([])
+  } finally {
+    setIsLoading(false)
   }
+}
 
   useEffect(() => {
     fetchProperties()

@@ -58,7 +58,7 @@ const RulerIcon = ({ className = "w-5 h-5" }) => (
 // ============================================
 // MAIN COMPONENT
 // ============================================
-export default function Condo() {
+export default function Lot() {
   const [properties, setProperties] = useState<Property[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
@@ -66,23 +66,27 @@ export default function Condo() {
   // ============================================
   // FETCH DATA - Filter by category 'pre-selling'
   // ============================================
-  const fetchProperties = async () => {
-    try {
-      const response = await fetch('/api/properties?category=pre-selling&type=buy')
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+  
 
-      const data = await response.json()
-      setProperties(data)
-    } catch (error) {
-      console.error('Failed to fetch pre-selling properties:', error)
-      setProperties([])
-    } finally {
-      setIsLoading(false)
+const fetchProperties = async () => {
+  try {
+    const response = await fetch('/api/properties?category=pre-selling&type=buy')
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
+
+    const data = await response.json()
+    
+    // ✅ FIXED: Extract the properties array from the response object
+    setProperties(data.properties || [])
+  } catch (error) {
+    console.error('Failed to fetch pre-selling properties:', error)
+    setProperties([])
+  } finally {
+    setIsLoading(false)
   }
+}
 
   useEffect(() => {
     fetchProperties()
@@ -232,13 +236,13 @@ export default function Condo() {
               e.preventDefault()
               setSelectedProperty(parsePropertyData(property))
               }}
-              className="w-full bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] hover:scale-105 text-sm shadow-sm"
+              className="cursor-pointer w-full bg-black text-white font-bold py-3 px-4 rounded-xl transition duration-300 hover:shadow-[0_0_20px_black] hover:scale-105 text-sm shadow-sm"
               >
               View Details
               </button>
             </Link>
             <Link href="/contact">
-              <button className="bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
+              <button className="cursor-pointer bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-sm">
                 Schedule Tour
               </button>
             </Link>

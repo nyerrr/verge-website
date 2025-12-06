@@ -210,26 +210,31 @@ export default function AdminPage() {
   // ============================================
   // DATA FETCHING
   // ============================================
-  const fetchProperties = useCallback(async () => {
-    if (!userData) return
 
-    try {
-      const params = new URLSearchParams()
-      if (filterCategory !== 'all') params.append('category', filterCategory)
-      if (filterType !== 'all') params.append('type', filterType)
-      
-      const url = `/api/properties${params.toString() ? `?${params}` : ''}`
-      const response = await fetch(url)
-      
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-      
-      const data: Property[] = await response.json()
-      setProperties(data)
-    } catch (error) {
-      console.error('Failed to fetch properties:', error)
-      alert('❌ Failed to load properties. Please refresh the page.')
-    }
-  }, [userData, filterCategory, filterType])
+
+const fetchProperties = useCallback(async () => {
+  if (!userData) return
+
+  try {
+    const params = new URLSearchParams()
+    if (filterCategory !== 'all') params.append('category', filterCategory)
+    if (filterType !== 'all') params.append('type', filterType)
+    
+    const url = `/api/properties${params.toString() ? `?${params}` : ''}`
+    const response = await fetch(url)
+    
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+    
+    const data = await response.json()
+    
+    // ✅ FIXED: Extract the properties array from the response object
+    setProperties(data.properties || [])
+  } catch (error) {
+    console.error('Failed to fetch properties:', error)
+    alert('❌ Failed to load properties. Please refresh the page.')
+    setProperties([]) // Set empty array on error
+  }
+}, [userData, filterCategory, filterType])
 
   useEffect(() => {
     fetchProperties()
@@ -321,33 +326,38 @@ export default function AdminPage() {
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    // Validation
-    if (!formData.title.trim()) {
-      alert('❌ Please enter a property title')
-      return
-    }
-    if (!formData.propertyId.trim()) {
-      alert('❌ Please enter a property ID')
-      return
-    }
-    if (!formData.price.trim()) {
-      alert('❌ Please enter a price')
-      return
-    }
+  // Validation
+  if (!formData.title.trim()) {
+    alert('❌ Please enter a property title')
+    return
+  }
+  if (!formData.propertyId.trim()) {
+    alert('❌ Please enter a property ID')
+    return
+  }
+  if (!formData.price.trim()) {
+    alert('❌ Please enter a price')
+    return
+  }
 
-    setIsSubmitting(true)
+  setIsSubmitting(true)
 
-    try {
+  try {
     const imagesToSend = formData.images.length ? formData.images : ['/property-placeholder.jpg']
     
     const payload = {
+      ...(isEditMode && editingPropertyId ? { id: editingPropertyId } : {}), // Add ID for updates
       ...formData,
-      images: JSON.stringify(imagesToSend),      
-      features: JSON.stringify(formData.features), 
+      images: JSON.stringify(imagesToSend),
+      features: JSON.stringify(formData.features),
     }
 
-    const response = await fetch('/api/properties/create', {
-      method: 'POST',
+    // Use different endpoint based on edit mode
+    const endpoint = isEditMode ? '/api/properties/update' : '/api/properties/create'
+    const method = isEditMode ? 'PUT' : 'POST'
+
+    const response = await fetch(endpoint, {
+      method: method,
       headers: {
         'Content-Type': 'application/json',
         'user-data': JSON.stringify(userData)
@@ -363,20 +373,20 @@ export default function AdminPage() {
     const result = await response.json()
 
     if (response.ok) {
-      alert('✅ Property added successfully!')
+      alert(`✅ Property ${isEditMode ? 'updated' : 'added'} successfully!`)
       setShowAddForm(false)
       await fetchProperties()
       resetForm()
     } else {
-      alert(`❌ Error: ${result.error || 'Failed to add property'}`)
+      alert(`❌ Error: ${result.error || `Failed to ${isEditMode ? 'update' : 'add'} property`}`)
     }
   } catch (error: any) {
-    console.error('Error adding property:', error)
+    console.error(`Error ${isEditMode ? 'updating' : 'adding'} property:`, error)
     alert(`❌ Error: ${error.message || 'Network error. Please try again.'}`)
   } finally {
     setIsSubmitting(false)
   }
-}, [formData, userData, fetchProperties, resetForm])
+}, [formData, userData, fetchProperties, resetForm, isEditMode, editingPropertyId])
 
   const handleEdit = useCallback((property: Property) => {
     setFormData({
