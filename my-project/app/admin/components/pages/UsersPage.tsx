@@ -14,77 +14,202 @@ interface UserData {
   userType: 'admin' | 'user'
   status: 'active' | 'inactive'
   joinedDate: string
+  photoURL?: string
+}
+
+interface UserFormData {
+  name: string
+  email: string
+  userType: 'admin' | 'user'
+  status: 'active' | 'inactive'
+}
+
+const INITIAL_FORM_STATE: UserFormData = {
+  name: '',
+  email: '',
+  userType: 'user',
+  status: 'active'
+}
+
+const BUTTON_STYLES = {
+  primary: "cursor-pointer px-6 py-3 bg-black text-white rounded-lg hover:shadow-[0_0_20px_black] transition duration-200 hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed",
+  secondary: "cursor-pointer px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 hover:scale-105 font-semibold",
+  edit: "cursor-pointer px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm hover:shadow-md",
+  danger: "cursor-pointer px-3 py-1.5 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-medium shadow-sm hover:shadow-md"
 }
 
 export default function UsersPage({ userData }: UsersPageProps) {
+  // State
   const [users, setUsers] = useState<UserData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterType, setFilterType] = useState<string>('all')
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editingUserId, setEditingUserId] = useState<string | null>(null)
+  const [formData, setFormData] = useState<UserFormData>(INITIAL_FORM_STATE)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // ============================================
+  // DATA FETCHING
+  // ============================================
+  const fetchUsers = useCallback(async () => {
+    if (!userData) return
+
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/users', {
+        headers: {
+          'user-data': JSON.stringify(userData)
+        }
+      })
+      
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+      
+      const data = await response.json()
+      setUsers(data.users || [])
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+      alert('❌ Failed to load users. Please refresh the page.')
+      setUsers([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [userData])
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [fetchUsers])
 
-  const fetchUsers = useCallback(async () => {
-    try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/users')
-      // const data = await response.json()
-      
-      // Mock data for now
-      setTimeout(() => {
-        setUsers([
-          {
-            id: '1',
-            name: 'John Doe',
-            email: 'john@example.com',
-            userType: 'user',
-            status: 'active',
-            joinedDate: '2024-01-15'
-          },
-          {
-            id: '2',
-            name: 'Jane Smith',
-            email: 'jane@example.com',
-            userType: 'admin',
-            status: 'active',
-            joinedDate: '2024-02-20'
-          },
-          {
-            id: '3',
-            name: 'Bob Wilson',
-            email: 'bob@example.com',
-            userType: 'user',
-            status: 'inactive',
-            joinedDate: '2024-03-10'
-          }
-        ])
-        setIsLoading(false)
-      }, 500)
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
-      setIsLoading(false)
+  // ============================================
+  // VALIDATION
+  // ============================================
+  const validateForm = useCallback(() => {
+    const validations = [
+      { condition: !formData.name.trim(), message: 'Please enter a name' },
+      { condition: !formData.email.trim(), message: 'Please enter an email' },
+      { condition: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email), message: 'Please enter a valid email address' },
+    ]
+    
+    for (const { condition, message } of validations) {
+      if (condition) {
+        alert(`❌ ${message}`)
+        return false
+      }
     }
+    return true
+  }, [formData.name, formData.email])
+
+  // ============================================
+  // FORM HANDLERS
+  // ============================================
+  const handleInputChange = useCallback((
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
   }, [])
 
-  const handleDeleteUser = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete user "${name}"?`)) {
+  const resetForm = useCallback(() => {
+    setFormData(INITIAL_FORM_STATE)
+    setIsEditMode(false)
+    setEditingUserId(null)
+  }, [])
+
+  const handleFormToggle = useCallback((forceClose = false) => {
+    if (showAddForm || forceClose) {
+      resetForm()
+    }
+    setShowAddForm(prev => forceClose ? false : !prev)
+  }, [showAddForm, resetForm])
+
+  const handleSubmit = useCallback(async () => {
+    if (!validateForm()) return
+
+    setIsSubmitting(true)
+
+    try {
+      const payload = {
+        ...(isEditMode && editingUserId ? { id: editingUserId } : {}),
+        ...formData,
+      }
+
+      const endpoint = isEditMode ? '/api/users/update' : '/api/users/create'
+      const method = isEditMode ? 'PUT' : 'POST'
+
+      const response = await fetch(endpoint, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'user-data': JSON.stringify(userData)
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response')
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        alert(`✅ User ${isEditMode ? 'updated' : 'added'} successfully!`)
+        handleFormToggle(true)
+        await fetchUsers()
+      } else {
+        alert(`❌ Error: ${result.error || `Failed to ${isEditMode ? 'update' : 'add'} user`}`)
+      }
+    } catch (error: any) {
+      console.error(`Error ${isEditMode ? 'updating' : 'adding'} user:`, error)
+      alert(`❌ Error: ${error.message || 'Network error. Please try again.'}`)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [formData, userData, fetchUsers, isEditMode, editingUserId, validateForm, handleFormToggle])
+
+  const handleEdit = useCallback((user: UserData) => {
+    setFormData({
+      name: user.name,
+      email: user.email,
+      userType: user.userType,
+      status: user.status,
+    })
+
+    setEditingUserId(user.id)
+    setIsEditMode(true)
+    setShowAddForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  const handleDeleteUser = useCallback(async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`)) {
       return
     }
 
     try {
-      // TODO: Implement delete API call
-      // await fetch(`/api/users/delete?id=${id}`, { method: 'DELETE' })
-      
-      alert(`✅ User "${name}" deleted successfully`)
-      fetchUsers()
-    } catch (error) {
-      console.error('Failed to delete user:', error)
-      alert('❌ Failed to delete user')
-    }
-  }
+      const response = await fetch(`/api/users/delete?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'user-data': JSON.stringify(userData) }
+      })
 
+      const result = await response.json()
+
+      if (response.ok) {
+        alert(`✅ User "${name}" deleted successfully`)
+        await fetchUsers()
+      } else {
+        alert(`❌ Failed to delete: ${result.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      alert('❌ Network error. Please try again.')
+    }
+  }, [userData, fetchUsers])
+
+  // ============================================
+  // FILTERING
+  // ============================================
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -92,6 +217,9 @@ export default function UsersPage({ userData }: UsersPageProps) {
     return matchesSearch && matchesFilter
   })
 
+  // ============================================
+  // LOADING STATE
+  // ============================================
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -100,6 +228,9 @@ export default function UsersPage({ userData }: UsersPageProps) {
     )
   }
 
+  // ============================================
+  // RENDER
+  // ============================================
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -108,14 +239,139 @@ export default function UsersPage({ userData }: UsersPageProps) {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600 mt-1">Manage platform users and permissions</p>
         </div>
-        <button className="px-6 py-3 bg-black text-white rounded-lg hover:shadow-lg transition font-semibold flex items-center space-x-2">
-          <span>+</span>
-          <span>Add User</span>
+        <button 
+          onClick={() => handleFormToggle()}
+          className={`${BUTTON_STYLES.primary} flex items-center space-x-2`}
+        >
+          {showAddForm ? (
+            <>
+              <span>✕</span>
+              <span>Cancel</span>
+            </>
+          ) : (
+            <>
+              <span>+</span>
+              <span>Add User</span>
+            </>
+          )}
         </button>
       </div>
 
+      {/* Add/Edit User Form */}
+      {showAddForm && (
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-black">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+              <span>{isEditMode ? '✏️' : '➕'}</span>
+              <span>{isEditMode ? 'Edit User' : 'Add New User'}</span>
+            </h2>
+            {isEditMode && (
+              <button
+                onClick={() => handleFormToggle(true)}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium text-sm"
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="e.g., John Doe"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="e.g., john@example.com"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  User Type <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="userType"
+                  value={formData.userType}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition cursor-pointer"
+                >
+                  <option value="user">Regular User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition cursor-pointer"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => handleFormToggle(true)}
+                type="button"
+                className={BUTTON_STYLES.secondary}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className={`${BUTTON_STYLES.primary} flex items-center space-x-2`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>{isEditMode ? 'Updating...' : 'Adding...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{isEditMode ? '💾' : '✅'}</span>
+                    <span>{isEditMode ? 'Update User' : 'Add User'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4">
+      <div className="text-black bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           <input
             type="text"
@@ -128,12 +384,19 @@ export default function UsersPage({ userData }: UsersPageProps) {
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          className="text-black px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer"
         >
           <option value="all">All Users</option>
           <option value="admin">Admins</option>
           <option value="user">Regular Users</option>
         </select>
+        <button
+          onClick={fetchUsers}
+          className="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm shadow-sm flex items-center space-x-2"
+        >
+          <span>🔄</span>
+          <span>Refresh</span>
+        </button>
       </div>
 
       {/* Stats */}
@@ -187,8 +450,13 @@ export default function UsersPage({ userData }: UsersPageProps) {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="text-gray-400">
-                      <p className="text-lg mb-2">No users found</p>
-                      <p className="text-sm">Try adjusting your search or filters</p>
+                      <div className="text-6xl mb-4">👥</div>
+                      <p className="text-lg mb-2 font-medium">No users found</p>
+                      <p className="text-sm">
+                        {searchQuery || filterType !== 'all'
+                          ? 'Try adjusting your search or filters'
+                          : 'Add your first user to get started'}
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -227,16 +495,19 @@ export default function UsersPage({ userData }: UsersPageProps) {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {new Date(user.joinedDate).toLocaleDateString()}
+                      {user.joinedDate ? new Date(user.joinedDate).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex gap-2 justify-center">
-                        <button className="px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                        <button 
+                          onClick={() => handleEdit(user)}
+                          className={BUTTON_STYLES.edit}
+                        >
                           Edit
                         </button>
                         <button 
                           onClick={() => handleDeleteUser(user.id, user.name)}
-                          className="px-3 py-1.5 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition"
+                          className={BUTTON_STYLES.danger}
                         >
                           Delete
                         </button>

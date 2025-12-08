@@ -9,6 +9,15 @@ interface PropertiesPageProps {
   userData: User
 }
 
+// Button style constants
+const BUTTON_STYLES = {
+  primary: "cursor-pointer px-6 py-3 bg-black text-white rounded-lg font-semibold hover:shadow-[0_0_20px_black] transition duration-200 shadow-md hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none",
+  secondary: "cursor-pointer px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition duration-200 hover:scale-105",
+  small: "cursor-pointer px-3 py-1.5 text-sm text-white rounded-lg transition font-medium shadow-sm hover:shadow-md",
+  danger: "cursor-pointer px-3 py-1.5 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-medium shadow-sm hover:shadow-md",
+  edit: "cursor-pointer px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm hover:shadow-md"
+}
+
 export default function PropertiesPage({ userData }: PropertiesPageProps) {
   // UI State
   const [showAddForm, setShowAddForm] = useState(false)
@@ -23,6 +32,25 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
   // Filter State
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [filterType, setFilterType] = useState<string>('all')
+
+  // ============================================
+  // VALIDATION
+  // ============================================
+  const validateForm = useCallback(() => {
+    const validations = [
+      { condition: !formData.title.trim(), message: 'Please enter a property title' },
+      { condition: !formData.propertyId.trim(), message: 'Please enter a property ID' },
+      { condition: !formData.price.trim(), message: 'Please enter a price' },
+    ]
+    
+    for (const { condition, message } of validations) {
+      if (condition) {
+        alert(`❌ ${message}`)
+        return false
+      }
+    }
+    return true
+  }, [formData.title, formData.propertyId, formData.price])
 
   // ============================================
   // DATA FETCHING
@@ -133,21 +161,17 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
     setEditingPropertyId(null)
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
     if (fileInput) fileInput.value = ''
-  }, [])
+  }, [])  
+
+  const handleFormToggle = useCallback((forceClose = false) => {
+    if (showAddForm || forceClose) {
+      resetForm()
+    }
+    setShowAddForm(prev => forceClose ? false : !prev)
+  }, [showAddForm, resetForm])
 
   const handleSubmit = useCallback(async () => {
-    if (!formData.title.trim()) {
-      alert('❌ Please enter a property title')
-      return
-    }
-    if (!formData.propertyId.trim()) {
-      alert('❌ Please enter a property ID')
-      return
-    }
-    if (!formData.price.trim()) {
-      alert('❌ Please enter a price')
-      return
-    }
+    if (!validateForm()) return
 
     setIsSubmitting(true)
 
@@ -182,9 +206,8 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
 
       if (response.ok) {
         alert(`✅ Property ${isEditMode ? 'updated' : 'added'} successfully!`)
-        setShowAddForm(false)
+        handleFormToggle(true)
         await fetchProperties()
-        resetForm()
       } else {
         alert(`❌ Error: ${result.error || `Failed to ${isEditMode ? 'update' : 'add'} property`}`)
       }
@@ -194,7 +217,7 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
     } finally {
       setIsSubmitting(false)
     }
-  }, [formData, userData, fetchProperties, resetForm, isEditMode, editingPropertyId])
+  }, [formData, userData, fetchProperties, isEditMode, editingPropertyId, validateForm, handleFormToggle])
 
   const handleEdit = useCallback((property: Property) => {
     setFormData({
@@ -247,18 +270,6 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
     }
   }, [userData, fetchProperties])
 
-  const toggleAddForm = useCallback(() => {
-    if (showAddForm) {
-      resetForm()
-    }
-    setShowAddForm(!showAddForm)
-  }, [showAddForm, resetForm])
-
-  const cancelEdit = useCallback(() => {
-    resetForm()
-    setShowAddForm(false)
-  }, [resetForm])
-
   // ============================================
   // RENDER
   // ============================================
@@ -272,8 +283,8 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
 
       {/* Add Property Button */}
       <button
-        onClick={toggleAddForm}
-        className="cursor-pointer mb-6 px-6 py-3 bg-black duration-300 hover:shadow-[0_0_20px_black] text-white rounded-lg transition font-semibold shadow-md transform hover:scale-105 flex items-center space-x-2"
+        onClick={() => handleFormToggle()}
+        className={`${BUTTON_STYLES.primary} flex items-center space-x-2`}
       >
         {showAddForm ? (
           <>
@@ -298,7 +309,7 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
             </h2>
             {isEditMode && (
               <button
-                onClick={cancelEdit}
+                onClick={() => handleFormToggle(true)}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium text-sm"
               >
                 Cancel Edit
@@ -613,16 +624,16 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
             {/* Submit Button */}
             <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
               <button
-                onClick={cancelEdit}
+                onClick={() => handleFormToggle(true)}
                 type="button"
-                className="hover:scale-105 cursor-pointer px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition duration-200"
+                className={BUTTON_STYLES.secondary}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="cursor-pointer px-6 py-3 bg-black text-white rounded-lg font-semibold hover:shadow-[0_0_20px_black] transition duration-200 shadow-md hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center space-x-2"
+                className={`${BUTTON_STYLES.primary} flex items-center space-x-2`}
               >
                 {isSubmitting ? (
                   <>
