@@ -216,21 +216,21 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
                 <button
                   onClick={() => updateInquiryStatus(inquiry.id, 'responded')}
                   disabled={inquiry.status === 'responded' || inquiry.status === 'closed'}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Mark as Responded
                 </button>
                 <button
                   onClick={() => updateInquiryStatus(inquiry.id, 'closed')}
                   disabled={inquiry.status === 'closed'}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Close Inquiry
                 </button>
                 <button
                   onClick={() => deleteInquiry(inquiry.id)}
                   disabled={deletingId === inquiry.id}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
+                  className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
                 >
                   {deletingId === inquiry.id ? 'Deleting...' : 'Delete'}
                 </button>
