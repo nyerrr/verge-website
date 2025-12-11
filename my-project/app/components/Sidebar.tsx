@@ -36,10 +36,10 @@ export default function Sidebar({ isOpen, onClose, onToggle, activeTab, onTabCha
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-gray-900 text-white z-50 
+          fixed top-0 left-0 h-screen bg-gray-900 text-white z-50 
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          w-64 shadow-2xl
+          w-64 shadow-2xl flex flex-col 
         `}
       >
         {/* Toggle Button - always attached to sidebar */}
@@ -58,7 +58,7 @@ export default function Sidebar({ isOpen, onClose, onToggle, activeTab, onTabCha
         <div className="p-6 border-b border-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className=" w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-lg">
+              <div className=" w-10 h-10 bg-linear-to-br from-black-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-lg">
                 A
               </div>
               <div>

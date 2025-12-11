@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from 'react'
 import type { User } from '@/app/admin/utils/types'
 
@@ -11,6 +10,7 @@ interface Inquiry {
   id: string
   customerName: string
   customerEmail: string
+  phoneNumber?: string
   propertyTitle: string
   message: string
   status: 'pending' | 'responded' | 'closed'
@@ -21,6 +21,7 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchInquiries()
@@ -28,42 +29,66 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
 
   const fetchInquiries = async () => {
     try {
-      // TODO: Replace with actual API call
-      setTimeout(() => {
-        setInquiries([
-          {
-            id: '1',
-            customerName: 'Alice Johnson',
-            customerEmail: 'alice@example.com',
-            propertyTitle: 'Modern Villa in Makati',
-            message: 'I would like to schedule a viewing for this property.',
-            status: 'pending',
-            date: '2024-12-05'
-          },
-          {
-            id: '2',
-            customerName: 'Bob Williams',
-            customerEmail: 'bob@example.com',
-            propertyTitle: 'Beach House in Batangas',
-            message: 'Is this property still available? What are the payment terms?',
-            status: 'responded',
-            date: '2024-12-04'
-          },
-          {
-            id: '3',
-            customerName: 'Carol Davis',
-            customerEmail: 'carol@example.com',
-            propertyTitle: 'Condo Unit BGC',
-            message: 'Can I get more photos of the unit?',
-            status: 'closed',
-            date: '2024-12-03'
-          }
-        ])
-        setIsLoading(false)
-      }, 500)
+      const response = await fetch('/api/inquiries')
+      
+      if (response.ok) {
+        const data = await response.json()
+        setInquiries(data.inquiries)
+      } else {
+        console.error('Failed to fetch inquiries')
+      }
     } catch (error) {
       console.error('Failed to fetch inquiries:', error)
+    } finally {
       setIsLoading(false)
+    }
+  }
+
+  const updateInquiryStatus = async (id: string, status: 'responded' | 'closed') => {
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, status })
+      })
+
+      if (response.ok) {
+        // Update local state
+        setInquiries(prev =>
+          prev.map(inquiry =>
+            inquiry.id === id ? { ...inquiry, status } : inquiry
+          )
+        )
+      }
+    } catch (error) {
+      console.error('Failed to update inquiry:', error)
+    }
+  }
+
+  const deleteInquiry = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this inquiry?')) {
+      return
+    }
+
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/inquiries?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        // Remove from local state
+        setInquiries(prev => prev.filter(inquiry => inquiry.id !== id))
+      } else {
+        alert('Failed to delete inquiry')
+      }
+    } catch (error) {
+      console.error('Failed to delete inquiry:', error)
+      alert('Failed to delete inquiry')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -95,13 +120,30 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Inquiries</h1>
-        <p className="text-gray-600 mt-1">Manage and respond to customer inquiries</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Inquiries</h1>
+          <p className="text-gray-600 mt-1">Manage and respond to customer inquiries</p>
+        </div>
+        <button
+          onClick={fetchInquiries}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+          <p className="text-sm text-gray-600">Total</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">
+            {inquiries.length}
+          </p>
+        </div>
         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
           <p className="text-sm text-gray-600">Pending</p>
           <p className="text-2xl font-bold text-yellow-600 mt-1">
@@ -123,7 +165,7 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
       </div>
 
       {/* Filter */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <div className="text-black bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
@@ -144,13 +186,21 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
           </div>
         ) : (
           filteredInquiries.map((inquiry) => (
-            <div key={inquiry.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition">
+            <div
+              key={inquiry.id}
+              className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition"
+            >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900">{inquiry.propertyTitle}</h3>
                   <p className="text-sm text-gray-600 mt-1">
                     From: <span className="font-medium">{inquiry.customerName}</span> ({inquiry.customerEmail})
                   </p>
+                  {inquiry.phoneNumber && (
+                    <p className="text-sm text-gray-600">
+                      Phone: <span className="font-medium">{inquiry.phoneNumber}</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(inquiry.status)}`}>
@@ -160,14 +210,29 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                <p className="text-sm text-gray-700">{inquiry.message}</p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{inquiry.message}</p>
               </div>
-              <div className="flex gap-2">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
-                  Respond
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => updateInquiryStatus(inquiry.id, 'responded')}
+                  disabled={inquiry.status === 'responded' || inquiry.status === 'closed'}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Mark as Responded
                 </button>
-                <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-sm">
-                  Mark as Closed
+                <button
+                  onClick={() => updateInquiryStatus(inquiry.id, 'closed')}
+                  disabled={inquiry.status === 'closed'}
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Close Inquiry
+                </button>
+                <button
+                  onClick={() => deleteInquiry(inquiry.id)}
+                  disabled={deletingId === inquiry.id}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
+                >
+                  {deletingId === inquiry.id ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

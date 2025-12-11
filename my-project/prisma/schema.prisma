@@ -86,3 +86,18 @@ model Property {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// ============================================
+// INQUIRY MODEL
+// ============================================
+model Inquiry {
+  id              String   @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  phoneNumber     String?
+  propertyTitle   String
+  message         String
+  status          String   @default("pending") // pending, responded, closed
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
