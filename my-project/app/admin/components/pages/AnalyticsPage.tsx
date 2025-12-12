@@ -8,6 +8,7 @@ import type { User } from '@/app/admin/utils/types'
 
 interface AnalyticsPageProps {
   userData: User
+  onNavigate?: (page: string) => void
 }
 
 interface Inquiry {
@@ -167,7 +168,7 @@ export default function AnalyticsPage({ userData }: AnalyticsPageProps) {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value as any)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer text-sm"
+            className="text-black px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer text-sm"
           >
             <option value="7days">Last 7 Days</option>
             <option value="30days">Last 30 Days</option>
@@ -187,7 +188,7 @@ export default function AnalyticsPage({ userData }: AnalyticsPageProps) {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-linear-to-br from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 text-sm">Total Properties</p>
@@ -204,7 +205,7 @@ export default function AnalyticsPage({ userData }: AnalyticsPageProps) {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-linear-to-br from-green-500 to-green-600 p-6 rounded-lg shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 text-sm">Total Inquiries</p>
@@ -221,7 +222,7 @@ export default function AnalyticsPage({ userData }: AnalyticsPageProps) {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-linear-to-br from-purple-500 to-purple-600 p-6 rounded-lg shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-purple-100 text-sm">Response Rate</p>
@@ -238,7 +239,7 @@ export default function AnalyticsPage({ userData }: AnalyticsPageProps) {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-lg shadow-lg text-white">
+        <div className="bg-linear-to-br from-orange-500 to-orange-600 p-6 rounded-lg shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-orange-100 text-sm">Properties Sold</p>
@@ -260,6 +261,7 @@ export default function AnalyticsPage({ userData }: AnalyticsPageProps) {
 
       {/* Activity Timeline */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity Timeline</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={timelineData}>

@@ -4,6 +4,7 @@ import type { User } from '@/app/admin/utils/types'
 
 interface InquiriesPageProps {
   userData: User
+  onNavigate?: (page: string) => void
 }
 
 interface Inquiry {

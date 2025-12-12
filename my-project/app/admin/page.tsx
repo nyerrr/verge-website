@@ -18,7 +18,13 @@ export default function AdminPage() {
 
   // UI State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('properties')
+  const [activeTab, setActiveTab] = useState('dashboard')
+
+  // Navigation handler
+  const handleNavigate = (page: string) => {
+    setActiveTab(page)
+    setIsSidebarOpen(false) // Close sidebar on mobile after navigation
+  }
 
   // ============================================
   // PAGE ROUTING
@@ -28,19 +34,19 @@ export default function AdminPage() {
 
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardPage userData={userData} />
+        return <DashboardPage userData={userData} onNavigate={handleNavigate} />
       case 'properties':
-        return <PropertiesPage userData={userData} />
+        return <PropertiesPage userData={userData} onNavigate={handleNavigate} />
       case 'users':
-        return <UsersPage userData={userData} />
+        return <UsersPage userData={userData} onNavigate={handleNavigate} />
       case 'inquiries':
-        return <InquiriesPage userData={userData} />
+        return <InquiriesPage userData={userData} onNavigate={handleNavigate} />
       case 'analytics':
-        return <AnalyticsPage userData={userData} />
+        return <AnalyticsPage userData={userData} onNavigate={handleNavigate} />
       case 'settings':
-        return <SettingsPage userData={userData} />
+        return <SettingsPage userData={userData} onNavigate={handleNavigate} />
       default:
-        return <DashboardPage userData={userData} />
+        return <DashboardPage userData={userData} onNavigate={handleNavigate} />
     }
   }
 
@@ -71,7 +77,7 @@ export default function AdminPage() {
         onClose={() => setIsSidebarOpen(false)}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleNavigate}
         userData={userData}
       />
 
@@ -93,4 +99,4 @@ export default function AdminPage() {
       </div>
     </div>
   )
-} 
+}

@@ -5,6 +5,7 @@ import type { User } from '@/app/admin/utils/types'
 
 interface UsersPageProps {
   userData: User
+  onNavigate?: (page: string) => void
 }
 
 interface UserData {

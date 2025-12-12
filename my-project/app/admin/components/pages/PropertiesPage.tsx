@@ -7,6 +7,7 @@ import { parseImages, parseFeatures, isCategoryAvailable } from '@/app/admin/uti
 
 interface PropertiesPageProps {
   userData: User
+  onNavigate?: (page: string) => void
 }
 
 // Button style constants

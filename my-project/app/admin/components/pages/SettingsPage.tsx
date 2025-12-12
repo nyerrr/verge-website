@@ -5,6 +5,7 @@ import type { User } from '@/app/admin/utils/types'
 
 interface SettingsPageProps {
   userData: User
+  onNavigate?: (page: string) => void
 }
 
 export default function SettingsPage({ userData }: SettingsPageProps) {
@@ -74,7 +75,7 @@ export default function SettingsPage({ userData }: SettingsPageProps) {
               name="siteName"
               value={settings.siteName}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
@@ -87,7 +88,7 @@ export default function SettingsPage({ userData }: SettingsPageProps) {
               name="contactEmail"
               value={settings.contactEmail}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -101,7 +102,7 @@ export default function SettingsPage({ userData }: SettingsPageProps) {
                 name="contactPhone"
                 value={settings.contactPhone}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             
