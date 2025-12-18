@@ -23,13 +23,17 @@ interface UserFormData {
   email: string
   userType: 'admin' | 'user'
   status: 'active' | 'inactive'
+  password:  string
+  confirmPassword: string
 }
 
 const INITIAL_FORM_STATE: UserFormData = {
   name: '',
   email: '',
   userType: 'user',
-  status: 'active'
+  status: 'active',
+  password: '',
+  confirmPassword: ''
 }
 
 const BUTTON_STYLES = {
@@ -86,20 +90,23 @@ export default function UsersPage({ userData }: UsersPageProps) {
   // VALIDATION
   // ============================================
   const validateForm = useCallback(() => {
-    const validations = [
-      { condition: !formData.name.trim(), message: 'Please enter a name' },
-      { condition: !formData.email.trim(), message: 'Please enter an email' },
-      { condition: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email), message: 'Please enter a valid email address' },
-    ]
-    
-    for (const { condition, message } of validations) {
-      if (condition) {
-        alert(`❌ ${message}`)
-        return false
-      }
+  const validations = [
+    { condition: !formData.name.trim(), message: 'Please enter a name' },
+    { condition: !formData.email.trim(), message: 'Please enter an email' },
+    { condition: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email), message: 'Please enter a valid email address' },
+    { condition: !isEditMode && !formData.password, message: 'Please enter a password' },
+    { condition: !isEditMode && formData.password.length < 6, message: 'Password must be at least 6 characters' },
+    { condition: !isEditMode && formData.password !== formData.confirmPassword, message: 'Passwords do not match' },
+  ]
+  
+  for (const { condition, message } of validations) {
+    if (condition) {
+      alert(`❌ ${message}`)
+      return false
     }
-    return true
-  }, [formData.name, formData.email])
+  }
+  return true
+}, [formData.name, formData.email, formData.password, formData.confirmPassword, isEditMode])
 
   // ============================================
   // FORM HANDLERS
@@ -175,8 +182,9 @@ export default function UsersPage({ userData }: UsersPageProps) {
       email: user.email,
       userType: user.userType,
       status: user.status,
+      password: '',
+      confirmPassword: ''
     })
-
     setEditingUserId(user.id)
     setIsEditMode(true)
     setShowAddForm(true)
@@ -341,35 +349,74 @@ export default function UsersPage({ userData }: UsersPageProps) {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-              <button
-                onClick={() => handleFormToggle(true)}
-                type="button"
-                className={BUTTON_STYLES.secondary}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className={`${BUTTON_STYLES.primary} flex items-center space-x-2`}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>{isEditMode ? 'Updating...' : 'Adding...'}</span>
-                  </>
-                ) : (
-                  <>
-                    <span>{isEditMode ? '💾' : '✅'}</span>
-                    <span>{isEditMode ? 'Update User' : 'Add User'}</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            {!isEditMode && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter password (min. 6 characters)"
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm Password <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        placeholder="Re-enter password"
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        />
+                        </div>
+                        </div>
+                      )}
+                      {isEditMode && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <p className="text-sm text-blue-800">
+                            <span className="font-semibold">ℹ️ Note:</span> Password cannot be changed here. User must reset their password through the login page.
+                            </p>
+                            </div>
+                          )}
+                          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                            <button
+                            onClick={() => handleFormToggle(true)}
+                            type="button"
+                            className={BUTTON_STYLES.secondary}
+                            >
+                              Cancel
+                              </button>
+                              <button
+                              onClick={handleSubmit}
+                              disabled={isSubmitting}
+                              className={`${BUTTON_STYLES.primary} flex items-center space-x-2`}
+                              >
+                                {isSubmitting ? (
+                                  <>
+                                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                  <span>{isEditMode ? 'Updating...' : 'Adding...'}</span>
+                                  </>
+                                  ) : (
+                                  <>
+                                  <span>{isEditMode ? '💾' : '✅'}</span>
+                                  <span>{isEditMode ? 'Update User' : 'Add User'}</span>
+                                  </>
+                                )}
+                                </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
 
       {/* Filters */}
       <div className="text-black bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4">

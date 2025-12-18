@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
 import PageTransition from '../components/PageTransition'
 import GoogleAuthButton from '../components/GoogleAuthButton'
@@ -18,7 +19,6 @@ export default function Auth() {
     const router = useRouter()
     const { data: session, status } = useSession()
 
-    // Redirect if already logged in
     useEffect(() => {
         if (status === "loading") return
         
@@ -32,7 +32,6 @@ export default function Auth() {
         }
     }, [session, status, router])
 
-    // Gmail validation function
     const isValidGmail = (email: string) => {
         const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i
         return gmailRegex.test(email)
@@ -48,13 +47,11 @@ export default function Auth() {
             return
         }
 
-        // Validate password length
         if (password.length < 6) {
             setError('Password must be at least 6 characters')
             return
         }
 
-        // Validate name for signup
         if (isSignUp && !name.trim()) {
             setError('Please enter your name')
             return
@@ -63,31 +60,56 @@ export default function Auth() {
         setIsLoading(true)
 
         try {
-            const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login'
-            const body = isSignUp 
-                ? { email: email.toLowerCase(), password, name }
-                : { email: email.toLowerCase(), password }
+            if (isSignUp) {
+                // Create account via your API
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: email.toLowerCase(), 
+                        password, 
+                        name 
+                    }),
+                })
 
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            })
+                const data = await response.json()
 
-            const data = await response.json()
+                if (!response.ok) {
+                    throw new Error(data.error)
+                }
 
-            if (!response.ok) {
-                throw new Error(data.error)
-            }
+                // After signup, automatically sign in with NextAuth
+                const result = await signIn('credentials', {
+                    email: email.toLowerCase(),
+                    password: password,
+                    redirect: false,
+                })
 
-            // Save user data
-            localStorage.setItem('userData', JSON.stringify(data.user))
+                if (result?.error) {
+                    throw new Error(result.error)
+                }
 
-            // Redirect based on userType with full page reload
-            if (data.user.userType === 'admin') {
-                window.location.href = '/admin'
+                // Redirect based on userType
+                if (data.user.userType === 'admin') {
+                    router.push('/admin')
+                } else {
+                    router.push('/')
+                }
             } else {
-                window.location.href = '/'
+                // Sign in with NextAuth credentials provider
+                const result = await signIn('credentials', {
+                    email: email.toLowerCase(),
+                    password: password,
+                    redirect: false,
+                })
+
+                if (result?.error) {
+                    throw new Error('Invalid email or password')
+                }
+
+                // NextAuth will handle the session, redirect based on session
+                // The useEffect above will handle the redirect
+                router.refresh()
             }
             
         } catch (err: any) {
@@ -97,7 +119,6 @@ export default function Auth() {
         }
     }
 
-    // Show loading while checking session
     if (status === "loading") {
         return (
             <PageTransition>
@@ -127,12 +148,10 @@ export default function Auth() {
                         {isSignUp ? 'Sign up with your Gmail address' : 'Sign in to your account'}
                     </p>
                     
-                    {/* Google Sign-In Button */}
                     <div className="mb-6">
                         <GoogleAuthButton />
                     </div>
 
-                    {/* Divider */}
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-300"></div>
@@ -144,7 +163,6 @@ export default function Auth() {
                         </div>
                     </div>
 
-                    {/* Email/Password Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {error && (
                             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
