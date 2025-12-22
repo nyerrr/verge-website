@@ -224,7 +224,7 @@ export default function Auth() {
                                 <button 
                                     type="button" 
                                     onClick={() => setShowPassword(!showPassword)}  
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-gray-600 transition-colors"
+                                    className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-gray-600 transition-colors"
                                 >
                                     {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
                                 </button>
@@ -234,7 +234,7 @@ export default function Auth() {
                         <button 
                             type="submit" 
                             disabled={isLoading}
-                            className="w-full py-2 px-4 text-white bg-black rounded-full hover:scale-105 transition duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer w-full py-2 px-4 text-white bg-black rounded-full hover:scale-105 transition duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign In')}
                         </button>
@@ -245,7 +245,7 @@ export default function Auth() {
                                 setIsSignUp(!isSignUp)
                                 setError('')
                             }}
-                            className="block w-full text-center text-sm text-blue-600 hover:underline mt-4"
+                            className="cursor-pointer block w-full text-center text-sm text-blue-600 hover:underline mt-4"
                         >
                             {isSignUp 
                                 ? 'Already have an account? Sign in' 
