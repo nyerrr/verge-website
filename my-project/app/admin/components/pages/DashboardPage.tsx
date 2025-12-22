@@ -131,7 +131,7 @@ export default function DashboardPage({ userData, onNavigate }: DashboardPagePro
         </div>
         <button
           onClick={fetchDashboardStats}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm flex items-center gap-2"
+          className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm flex items-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -176,7 +176,7 @@ export default function DashboardPage({ userData, onNavigate }: DashboardPagePro
               stats.recentActivities.map((activity) => (
                 <div 
                   key={activity.id} 
-                  className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+                  className="cursor-pointer  flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
                 >
                   <span className="text-2xl">{activity.icon}</span>
                   <div className="flex-1">
@@ -200,28 +200,28 @@ export default function DashboardPage({ userData, onNavigate }: DashboardPagePro
           <div className="space-y-3">
             <button 
               onClick={() => onNavigate('properties')}
-              className="w-full text-left px-4 py-3 bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
+              className="cursor-pointer w-full text-left px-4 py-3 bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
             >
               <span className="text-xl">➕</span>
               <span>Add New Property</span>
             </button>
             <button 
               onClick={() => onNavigate('users')}
-              className="w-full text-left px-4 py-3 bg-lineart-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
+              className="cursor-pointer w-full text-left px-4 py-3 bg-lineart-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
             >
               <span className="text-xl">👥</span>
               <span>Manage Users</span>
             </button>
             <button 
               onClick={() => onNavigate('inquiries')}
-              className="w-full text-left px-4 py-3 bg-linear-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
+              className="cursor-pointer w-full text-left px-4 py-3 bg-linear-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
             >
               <span className="text-xl">💬</span>
               <span>View Inquiries</span>
             </button>
             <button 
               onClick={() => onNavigate('analytics')}
-              className="w-full text-left px-4 py-3 bg-linear-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
+              className="cursor-pointer w-full text-left px-4 py-3 bg-linear-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 rounded-lg transition text-gray-900 font-medium flex items-center space-x-3"
             >
               <span className="text-xl">📈</span>
               <span>View Analytics</span>
