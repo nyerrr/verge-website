@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ============================================
@@ -44,8 +45,9 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  password      String?   // Added for email/password auth
+  password      String?
   userType      String    @default("user")
+  phone         String?
   accounts      Account[]
   sessions      Session[]
   createdAt     DateTime  @default(now())
@@ -80,8 +82,8 @@ model Property {
   yearBuilt   String?
   propertyId  String   @unique
   image       String
-  images      String   // Changed from Json to String for SQLite
-  features    String   // Changed from Json to String for SQLite
+  images      Json     // Now using Json since PostgreSQL supports it natively
+  features    Json     // Now using Json since PostgreSQL supports it natively
   createdBy   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -91,13 +93,13 @@ model Property {
 // INQUIRY MODEL
 // ============================================
 model Inquiry {
-  id              String   @id @default(cuid())
-  customerName    String
-  customerEmail   String
-  phoneNumber     String?
-  propertyTitle   String
-  message         String
-  status          String   @default("pending") // pending, responded, closed
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            String   @id @default(cuid())
+  customerName  String
+  customerEmail String
+  phoneNumber   String?
+  propertyTitle String
+  message       String
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
