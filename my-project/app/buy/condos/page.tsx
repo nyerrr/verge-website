@@ -62,7 +62,7 @@ export default function Condo() {
   const [isLoading, setIsLoading] = useState(true)
 
   // ============================================
-  // FETCH DATA - Filter by category 'pre-selling'
+  // FETCH DATA - Filter by category 'ready-for-occupancy'
   // ============================================
   const fetchProperties = async () => {
     try {
@@ -75,7 +75,7 @@ export default function Condo() {
       const data = await response.json()
       setProperties(data)
     } catch (error) {
-      console.error('Failed to fetch pre-selling properties:', error)
+      console.error('Failed to fetch ready-for-occupancy properties:', error)
       setProperties([])
     } finally {
       setIsLoading(false)
@@ -118,7 +118,7 @@ export default function Condo() {
             className="object-cover group-hover:scale-110 transition-transform duration-700"
           />
           <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
-            Pre-Selling
+            Ready For Occupancy
           </div>
           
           <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/60 to-transparent p-4">
@@ -212,18 +212,18 @@ export default function Condo() {
         <div className="absolute inset-0 flex flex-col items-start justify-center z-20 text-white px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24">
           <div className="mb-4 sm:mb-6">
             <span className="inline-block text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-gray-200 bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-md border border-white/20 shadow-lg">
-              Pre-Selling Properties
+              Ready For Occupancy Condos
             </span>
           </div>
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-5 md:mb-6 leading-[1.1] tracking-tight">
             <span className="block text-white">
-              Invest Early, Save More
+              Move in Today, Save More
             </span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl max-w-3xl text-gray-200 leading-relaxed font-light">
-            Secure your dream property at pre-construction prices with flexible payment terms
+            Secure your dream property with flexible payment terms
           </p>
         </div>
       </section>
@@ -237,7 +237,7 @@ export default function Condo() {
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-5 leading-tight">
-            Pre-Selling Properties
+            Premium Ready For Occupancy Condos
           </h2>
           <p className="text-gray-600 text-lg md:text-xl leading-relaxed">
             Discover <span className="font-semibold text-gray-900">{properties.length}</span> premium pre-selling properties
@@ -252,7 +252,7 @@ export default function Condo() {
           </div>
         ) : properties.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl shadow-md p-8">
-            <p className="text-gray-600 text-lg">No pre-selling properties available yet.</p>
+            <p className="text-gray-600 text-lg">No ready-for-occupancy properties available yet.</p>
             <p className="text-sm text-gray-400 mt-2">Check back soon for new listings.</p>
           </div>
         ) : (
@@ -267,7 +267,7 @@ export default function Condo() {
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto text-white">
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-            Why Buy Pre-Selling?
+            Why Buy Ready For Occupancy?
           </h3>
           <p className="text-sm sm:text-base md:text-lg mb-10">
             Get the best deals and secure your investment early with flexible payment terms.
@@ -295,7 +295,7 @@ export default function Condo() {
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Property Features</h3>
           <p className="text-gray-600 mb-8 text-sm sm:text-base">
-            Our pre-selling properties come with premium features and amenities.
+            Our ready-for-occupancy properties come with premium features and amenities.
           </p>
           <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-700">
             {[
@@ -322,12 +322,12 @@ export default function Condo() {
         <h2 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Invest?</h2>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
           <Link href="/contact" className="w-full sm:w-auto">
-            <button className="transition duration-300 hover:shadow-[0_0_20px_black] hover:scale-105 w-full sm:w-auto bg-black text-white px-8 py-4 rounded-xl font-semibold">
+            <button className="cursor-pointer transition duration-300 hover:shadow-[0_0_20px_black] hover:scale-105 w-full sm:w-auto bg-black text-white px-8 py-4 rounded-xl font-semibold">
               Reserve Now
             </button>
           </Link>
           <Link href="/contact" className="w-full sm:w-auto">
-            <button className="hover:scale-105 w-full sm:w-auto bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold border-2 border-gray-200 hover:bg-gray-50 transition">
+            <button className="cursor-pointer hover:scale-105 w-full sm:w-auto bg-white text-gray-900 px-8 py-4 rounded-xl font-semibold border-2 border-gray-200 hover:bg-gray-50 transition">
               Get Brochure
             </button>
           </Link>
