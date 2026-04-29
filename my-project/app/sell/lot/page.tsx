@@ -77,7 +77,7 @@ export default function Lot() {
   // --- Data Fetching Logic ---
   const fetchProperties = async () => {
   try {
-    const response = await fetch('/api/properties?category=lot&type=sell');
+    const response = await fetch('/api/properties?category=house-and-lot&type=sell');
     
     // Check if the response is OK before parsing
     if (!response.ok) {
@@ -86,7 +86,6 @@ export default function Lot() {
     
     const data = await response.json();
     
-    // ✅ FIXED: Extract the properties array from the response object
     setPropertiesData(data.properties || []);
   } catch (error) {
     console.error('Failed to fetch properties:', error);

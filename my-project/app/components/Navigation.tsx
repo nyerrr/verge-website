@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Poppins } from 'next/font/google'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
+import { useSession, signOut } from "next-auth/react";
 
 const poppins = Poppins({
   subsets: ['latin'],
