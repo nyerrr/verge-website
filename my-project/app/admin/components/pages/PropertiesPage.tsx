@@ -182,8 +182,8 @@ export default function PropertiesPage({ userData }: PropertiesPageProps) {
       const payload = {
         ...(isEditMode && editingPropertyId ? { id: editingPropertyId } : {}),
         ...formData,
-        images: JSON.stringify(imagesToSend),
-        features: JSON.stringify(formData.features),
+        images: imagesToSend,              // remove JSON.stringify
+        features: formData.features,       // remove JSON.stringify
       }
 
       const endpoint = isEditMode ? '/api/properties/update' : '/api/properties/create'

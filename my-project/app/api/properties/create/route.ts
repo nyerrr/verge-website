@@ -1,13 +1,11 @@
 // app/api/properties/create/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./../../../lib/prisma"; // Adjust the path as needed
 import { revalidatePath } from "next/cache";
-
-const prisma = new PrismaClient();
+import cloudinary from "../../../lib/cloudinary";
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse request body
     const data = await request.json();
     console.log('Received data:', data);
 
@@ -30,55 +28,55 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // --- Normalize category/type (keep as lowercase) ---
+    // --- Normalize category/type ---
     const normalizedCategory = data.category?.toLowerCase() || null;
     const normalizedType = data.type?.toLowerCase() || null;
 
-    // --- Handle images ---
+    // --- Upload images to Cloudinary ---
+    // --- Upload images to Cloudinary ---
     let imagesArray: string[] = [];
-    
-    if (data.images) {
-      try {
-        // If images is already an array, use it
-        if (Array.isArray(data.images)) {
-          imagesArray = data.images;
-        } 
-        // If images is a string, try to parse it
-        else if (typeof data.images === 'string') {
-          imagesArray = JSON.parse(data.images);
+
+    if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+      console.log('Images received:', data.images.length)
+      console.log('First image preview:', data.images[0]?.substring(0, 50))
+      
+      const uploadPromises = data.images.map(async (image: string) => {
+        if (image.startsWith('http') || image.startsWith('/')) {
+          console.log('Skipping URL image:', image)
+          return image
         }
-      } catch (err) {
-        console.error('Error parsing images:', err);
-        imagesArray = ['/property-placeholder.jpg'];
-      }
+        
+        console.log('Uploading to Cloudinary...')
+        const result = await cloudinary.uploader.upload(image, {
+          folder: 'verge-properties',
+          resource_type: 'image',
+        })
+        console.log('Uploaded:', result.secure_url)
+        return result.secure_url
+      })
+
+      imagesArray = await Promise.all(uploadPromises)
+      console.log('Images uploaded successfully:', imagesArray)
     }
 
     // Fallback to placeholder if no images
     if (imagesArray.length === 0) {
-      imagesArray = ['/property-placeholder.jpg'];
+      imagesArray = ['/property-placeholder.jpg']
     }
 
-    const mainImage = imagesArray[0];
-    const imagesJson = JSON.stringify(imagesArray);
+    const mainImage = imagesArray[0]
 
     // --- Handle features ---
-    let featuresJson = "{}";
+    let featuresObj = {}
     if (data.features) {
       try {
-        featuresJson = typeof data.features === 'string' 
-          ? data.features 
-          : JSON.stringify(data.features);
+        featuresObj = typeof data.features === 'string'
+          ? JSON.parse(data.features)
+          : data.features
       } catch (err) {
-        console.error('Error parsing features:', err);
+        console.error('Error parsing features:', err)
       }
     }
-
-    console.log('Creating property with:', {
-      category: normalizedCategory,
-      type: normalizedType,
-      images: imagesJson,
-      mainImage
-    });
 
     // --- Create property in database ---
     const newProperty = await prisma.property.create({
@@ -98,15 +96,14 @@ export async function POST(request: NextRequest) {
         yearBuilt: data.yearBuilt || null,
         propertyId: data.propertyId,
         image: mainImage,
-        images: imagesJson,
-        features: featuresJson,
+        images: imagesArray,      // ✅ store as Json array, not stringified
+        features: featuresObj,    // ✅ store as Json object, not stringified
         createdBy: userData.email,
       },
     });
 
     console.log('Property created successfully:', newProperty.id);
 
-    // --- Revalidate property listing pages ---
     revalidatePath("/properties");
     revalidatePath("/admin");
 
@@ -118,17 +115,13 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error("Create property error:", error);
-    
-    // Return proper JSON error response
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: error.message || "Failed to create property",
         details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
-} 
+}

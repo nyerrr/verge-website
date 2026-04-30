@@ -32,9 +32,10 @@ export default function Auth() {
         }
     }, [session, status, router])
 
-    const isValidGmail = (email: string) => {
-        const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i
-        return gmailRegex.test(email)
+    // ✅ Accepts any valid email
+    const isValidEmail = (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i
+    return emailRegex.test(email)
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -42,8 +43,8 @@ export default function Auth() {
         setError('')
 
         // Validate Gmail
-        if (!isValidGmail(email)) {
-            setError('Please use a valid Gmail address (@gmail.com)')
+        if (!isValidEmail(email)) {
+            setError('Please enter a valid email address')
             return
         }
 
@@ -145,7 +146,7 @@ export default function Auth() {
                         {isSignUp ? 'Create Account' : 'Welcome Back'}
                     </h2>
                     <p className="text-sm text-gray-600 text-center mb-6">
-                        {isSignUp ? 'Sign up with your Gmail address' : 'Sign in to your account'}
+                        {isSignUp ? 'Sign up with your email address' : 'Sign in to your account'}
                     </p>
                     
                     <div className="mb-6">
@@ -190,7 +191,7 @@ export default function Auth() {
 
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                Gmail Address
+                                Email Address
                             </label>
                             <input
                                 type="email"
@@ -198,11 +199,10 @@ export default function Auth() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-4 py-2 text-black placeholder:text-gray-400 rounded-2xl border border-black focus:outline-none focus:ring-2 focus:ring-black"
-                                placeholder="yourname@gmail.com"
+                                placeholder="yourname@example.com"
                                 required
                                 disabled={isLoading}
                             />
-                            <p className="text-xs text-gray-500 mt-1">Only Gmail accounts are accepted</p>
                         </div>
                         
                         <div className="w-full">
