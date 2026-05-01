@@ -99,6 +99,7 @@ model Inquiry {
   phoneNumber   String?
   propertyTitle String
   message       String
+  response      String?
   status        String   @default("pending")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

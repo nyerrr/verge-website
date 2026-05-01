@@ -65,7 +65,14 @@ export async function PUT(request: NextRequest) {
     } else {
       // Keep existing images if none provided
       try {
-        imagesArray = JSON.parse(existingProperty.images || '[]');
+        const existingImages = existingProperty.images;
+        if (typeof existingImages === 'string') {
+          imagesArray = JSON.parse(existingImages || '[]');
+        } else if (Array.isArray(existingImages)) {
+          imagesArray = existingImages as string[];
+        } else {
+          imagesArray = [];
+        }
       } catch {
         imagesArray = [existingProperty.image || '/property-placeholder.jpg'];
       }

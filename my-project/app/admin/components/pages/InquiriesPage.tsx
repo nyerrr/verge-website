@@ -14,6 +14,7 @@ interface Inquiry {
   phoneNumber?: string
   propertyTitle: string
   message: string
+  response?: string | null
   status: 'pending' | 'responded' | 'closed'
   date: string
 }
@@ -23,6 +24,9 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null)
+  const [replyText, setReplyText] = useState<string>('')
+  const [isReplying, setIsReplying] = useState(false)
 
   useEffect(() => {
     fetchInquiries()
@@ -42,6 +46,53 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
       console.error('Failed to fetch inquiries:', error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const openReplyBox = (inquiry: Inquiry) => {
+    setActiveReplyId(inquiry.id)
+    setReplyText(inquiry.response ?? '')
+  }
+
+  const cancelReply = () => {
+    setActiveReplyId(null)
+    setReplyText('')
+  }
+
+  const submitReply = async (id: string) => {
+    if (!replyText.trim()) {
+      alert('Please enter a response message before sending.')
+      return
+    }
+
+    setIsReplying(true)
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, response: replyText })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setInquiries(prev =>
+          prev.map(inquiry =>
+            inquiry.id === id
+              ? { ...inquiry, status: data.inquiry.status, response: data.inquiry.response }
+              : inquiry
+          )
+        )
+        cancelReply()
+      } else {
+        alert('Failed to save reply.')
+      }
+    } catch (error) {
+      console.error('Failed to submit reply:', error)
+      alert('Failed to save reply.')
+    } finally {
+      setIsReplying(false)
     }
   }
 
@@ -213,6 +264,42 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
               <div className="bg-gray-50 p-4 rounded-lg mb-4">
                 <p className="text-sm text-gray-700 whitespace-pre-wrap">{inquiry.message}</p>
               </div>
+
+              {inquiry.response && (
+                <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-4">
+                  <p className="text-sm font-medium text-blue-800 mb-2">Admin response</p>
+                  <p className="text-sm text-blue-700 whitespace-pre-wrap">{inquiry.response}</p>
+                </div>
+              )}
+
+              {activeReplyId === inquiry.id ? (
+                <div className="space-y-3 mb-4">
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    rows={4}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Write your response here..."
+                  />
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => submitReply(inquiry.id)}
+                      disabled={isReplying}
+                      className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isReplying ? 'Sending...' : 'Send Response'}
+                    </button>
+                    <button
+                      onClick={cancelReply}
+                      type="button"
+                      className="cursor-pointer px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={() => updateInquiryStatus(inquiry.id, 'responded')}
@@ -220,6 +307,13 @@ export default function InquiriesPage({ userData }: InquiriesPageProps) {
                   className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Mark as Responded
+                </button>
+                <button
+                  onClick={() => openReplyBox(inquiry)}
+                  disabled={inquiry.status === 'closed'}
+                  className="cursor-pointer px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Reply
                 </button>
                 <button
                   onClick={() => updateInquiryStatus(inquiry.id, 'closed')}

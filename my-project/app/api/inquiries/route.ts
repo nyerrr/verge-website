@@ -1,6 +1,11 @@
 // app/api/inquiries/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../lib/prisma'
+import { Resend } from 'resend'
+
+const resendClient = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null
 
 // GET all inquiries
 export async function GET(request: NextRequest) {
@@ -20,6 +25,7 @@ export async function GET(request: NextRequest) {
       propertyTitle: inquiry.propertyTitle,
       message: inquiry.message,
       status: inquiry.status,
+      response: inquiry.response,
       date: inquiry.createdAt.toISOString()
     }))
 
@@ -33,29 +39,77 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH - Update inquiry status
+// PATCH - Update inquiry status or send a response
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, status } = body
+    const { id, status, response } = body
 
-    // Validate status
-    if (!['pending', 'responded', 'closed'].includes(status)) {
+    if (!id) {
       return NextResponse.json(
-        { error: 'Invalid status value' },
+        { error: 'Inquiry ID is required' },
         { status: 400 }
       )
     }
 
-    // Update inquiry in database
+    const inquiry = await prisma.inquiry.findUnique({ where: { id } })
+    if (!inquiry) {
+      return NextResponse.json(
+        { error: 'Inquiry not found' },
+        { status: 404 }
+      )
+    }
+
+    const updateData: Record<string, unknown> = {}
+
+    if (response !== undefined) {
+      updateData.response = response
+      if (status === undefined) {
+        updateData.status = 'responded'
+      }
+    }
+
+    if (status !== undefined) {
+      if (!['pending', 'responded', 'closed'].includes(status)) {
+        return NextResponse.json(
+          { error: 'Invalid status value' },
+          { status: 400 }
+        )
+      }
+      updateData.status = status
+    }
+
     const updatedInquiry = await prisma.inquiry.update({
       where: { id },
-      data: { status }
+      data: updateData
     })
+
+    if (
+      response &&
+      resendClient &&
+      process.env.RESEND_FROM_EMAIL &&
+      inquiry.customerEmail
+    ) {
+      try {
+        await resendClient.emails.send({
+          from: process.env.RESEND_FROM_EMAIL,
+          to: inquiry.customerEmail,
+          subject: `Response to your inquiry about ${inquiry.propertyTitle}`,
+          html: `<p>Hi ${inquiry.customerName},</p>
+<p>Thank you for your inquiry. Here is our response:</p>
+<div style="padding: 16px; background: #f4f4f7; border-radius: 8px;">
+  <p>${response.replace(/\n/g, '<br />')}</p>
+</div>
+<p>Best regards,<br/>The Verge Team</p>`
+        })
+      } catch (emailError) {
+        console.error('Error sending response email:', emailError)
+      }
+    }
 
     return NextResponse.json(
       { 
-        success: true, 
+        success: true,
         message: 'Inquiry updated successfully',
         inquiry: updatedInquiry
       },
